@@ -1,0 +1,40 @@
+
+spring:
+  application:
+    name: gulimall-product
+  main:
+    #当遇到同样名字的时候，是否允许覆盖注册
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 169.254.115.10:8848
+      config:
+        server-addr: 169.254.115.10:8848
+        namespace: gulimall-product
+  aop:
+    proxy-target-class: true
+  jackson:
+    jackson:
+      time-zone: GMT+8
+      date-format: yyyy-MM-dd HH:mm:ss
+    mvc:
+      #出现错误时, 直接抛出异常(便于异常统一处理，否则捕获不到404)
+      throw-exception-if-no-handler-found: true
+      date-format: yyyy-MM-dd HH:mm:ss
+server:
+  port: 8014
+  basic:
+    enabled: false
+feign:
+  httpclient:
+    enabled: true
+  compression:
+    request:
+      min-request-size: 4096
+ribbon:
+  OkToRetryOnAllOperations: false #对所有操作请求都进行重试,默认false
+  ReadTimeout: 10000   #负载均衡超时时间，默认值5000
+  ConnectTimeout: 10000 #ribbon请求连接的超时时间，默认值2000
+  MaxAutoRetries: 0     #对当前实例的重试次数，默认0
+  MaxAutoRetriesNextServer: 1 #对切换实例的重试次数，默认1

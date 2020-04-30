@@ -1,0 +1,13 @@
+
+spring:
+  application:
+    name: gulimall-admin
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 169.254.115.10:8848
+      config:
+        server-addr: 169.254.115.10:8848
+        namespace: gulimall-admin
+server:
+  port: 8010

@@ -1,0 +1,18 @@
+
+spring:
+  application:
+    name: gulimall-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 169.254.115.10:8848
+      config:
+        server-addr: 169.254.115.10:8848
+        namespace: gateway
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+server:
+  port: 88

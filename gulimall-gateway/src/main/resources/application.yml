@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: baidu-route
+          uri: https://www.baidu.com
+          predicates:
+             -  Query=url,baidu
+        - id: qq-route
+          uri: https://wwwqq.com
+          predicates:
+            -  Query=url,qq
+
+        - id: gulimall-product-route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/product/(?<segment>.*),/$\{segment}
+
+        - id: gulimall-admin-route
+          uri: lb://gulimall-admin
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}

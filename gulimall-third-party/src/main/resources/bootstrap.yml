@@ -1,0 +1,13 @@
+
+spring:
+  application:
+    name: gulimall-third-party
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 169.254.115.10:8848
+      config:
+        server-addr: 169.254.115.10:8848
+        namespace: gulimall-third-party
+server:
+  port: 8015
