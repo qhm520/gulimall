@@ -1,9 +1,11 @@
 package com.qian.gulimall.admin.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.qian.gulimall.admin.entity.SysUserEntity;
+import com.qian.gulimall.admin.service.SysUserRoleService;
+import com.qian.gulimall.admin.service.SysUserService;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
+import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -15,11 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.qian.gulimall.admin.entity.SysUserEntity;
-import com.qian.gulimall.admin.service.SysUserService;
-import com.qian.gulimall.common.utils.PageUtils;
-import com.qian.gulimall.common.utils.R;
-
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -29,18 +29,21 @@ import com.qian.gulimall.common.utils.R;
  * @email 794308528@qq.com
  * @date 2020-04-19 08:57:20
  */
+
 @RestController
 @RequestMapping("sys/user")
 public class SysUserController {
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
 
     /**
      * 列表
      */
     @RequestMapping("/list")
     //@RequiresPermissions("admin:sysuser:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = sysUserService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -50,12 +53,11 @@ public class SysUserController {
      * 获取登录的用户信息
      */
     @GetMapping("/info")
-    public R info(){
+    public R info() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsVo userDetailsVo = (UserDetailsVo)authentication.getPrincipal();
+        UserDetailsVo userDetailsVo = (UserDetailsVo) authentication.getPrincipal();
         return R.ok().put("user", userDetailsVo);
     }
-
 
 
     /**
@@ -63,10 +65,12 @@ public class SysUserController {
      */
     @RequestMapping("/info/{userId}")
     //@RequiresPermissions("admin:sysuser:info")
-    public R info(@PathVariable("userId") Long userId){
-		SysUserEntity sysUser = sysUserService.getById(userId);
-
-        return R.ok().put("sysUser", sysUser);
+    public R info(@PathVariable("userId") Long userId) {
+        SysUserEntity sysUser = sysUserService.getById(userId);
+            //获取用户所属的角色列表
+        List<Long> roleIdList = sysUserRoleService.queryRoleIdList(userId);
+        sysUser.setRoleIdList(roleIdList);
+        return R.ok().put("user", sysUser);
     }
 
     /**
@@ -74,8 +78,10 @@ public class SysUserController {
      */
     @RequestMapping("/save")
     @PreAuthorize("hasPermission('', 'sys:user:save')")
-    public R save(@RequestBody SysUserEntity sysUser){
-		sysUserService.save(sysUser);
+    public R save(@RequestBody SysUserEntity sysUser, Authentication authentication) {
+        UserDetailsVo userDetailsVo = (UserDetailsVo) authentication.getPrincipal();
+        sysUser.setCreateUserId(userDetailsVo.getUserId());
+        sysUserService.saveUser(sysUser);
         return R.ok();
     }
 
@@ -84,8 +90,10 @@ public class SysUserController {
      */
     @RequestMapping("/update")
     @PreAuthorize("hasPermission('', 'sys:user:update')")
-    public R update(@RequestBody SysUserEntity sysUser){
-		sysUserService.updateById(sysUser);
+    public R update(@RequestBody SysUserEntity sysUser, Authentication authentication) {
+        UserDetailsVo userDetailsVo = (UserDetailsVo) authentication.getPrincipal();
+        sysUser.setCreateUserId(userDetailsVo.getUserId());
+        sysUserService.update(sysUser);
         return R.ok();
     }
 
@@ -94,9 +102,15 @@ public class SysUserController {
      */
     @RequestMapping("/delete")
     //@RequiresPermissions("admin:sysuser:delete")
-    public R delete(@RequestBody Long[] userIds){
-		sysUserService.removeByIds(Arrays.asList(userIds));
+    public R delete(@RequestBody Long[] userIds) {
+        sysUserService.removeByIds(Arrays.asList(userIds));
         return R.ok();
     }
+
+   /* @GetMapping("query/{id}")
+    public R querySysUser(@PathVariable("id") Integer id) {
+        SysUserEntity sysUserEntity = sysUserService.querySysUserById(id);
+        return R.ok().put("data", sysUserEntity);
+    }*/
 
 }

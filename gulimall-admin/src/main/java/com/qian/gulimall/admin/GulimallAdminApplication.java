@@ -3,7 +3,6 @@ package com.qian.gulimall.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -18,6 +17,7 @@ import org.springframework.context.annotation.ComponentScan;
  * Date 2020/04/16
  * Time 23:38
  */
+//@EnableAspectJAutoProxy
 @EnableDiscoveryClient
 @SpringBootApplication
 @ComponentScan({"com.qian.gulimall.admin", "com.qian.gulimall.security"})

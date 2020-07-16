@@ -1,12 +1,13 @@
 package com.qian.gulimall.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
+import java.util.List;
 
 /**
  * 系统用户
@@ -48,7 +49,7 @@ public class SysUserEntity implements Serializable {
 	/**
 	 * 状态  0：禁用   1：正常
 	 */
-	@TableLogic(value = "1", delval = "0")
+//	@TableLogic(value = "1", delval = "0")
 	private Integer status;
 	/**
 	 * 创建者ID
@@ -58,5 +59,11 @@ public class SysUserEntity implements Serializable {
 	 * 创建时间
 	 */
 	private Date createTime;
+
+	/**
+	 * 角色ID列表
+	 */
+	@TableField(exist=false)
+	private List <Long> roleIdList;
 
 }

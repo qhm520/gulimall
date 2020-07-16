@@ -26,23 +26,23 @@ import java.util.Map;
 @RestControllerAdvice
 public class AdminExceptionControllerAdvice {
 
-    @ExceptionHandler(value= MethodArgumentNotValidException.class)
-    public R handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.error("数据校验出现问题{}，异常类型：{}",e.getMessage(),e.getClass());
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public R handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("数据校验出现问题{}，异常类型：{}", e.getMessage(), e.getClass());
         BindingResult bindingResult = e.getBindingResult();
 
-        Map <String,String> errorMap = new HashMap <>();
-        bindingResult.getFieldErrors().forEach((fieldError)->{
-            errorMap.put(fieldError.getField(),fieldError.getDefaultMessage());
-        });
-        return R.error(AdminEnum.VAILD_EXCEPTION.getCode(),AdminEnum.VAILD_EXCEPTION.getMsg()).put("data",errorMap);
+        Map <String, String> errorMap = new HashMap <>();
+        bindingResult.getFieldErrors().forEach(fieldError ->
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage())
+        );
+        return R.error(AdminEnum.VAILD_EXCEPTION.getCode(), AdminEnum.VAILD_EXCEPTION.getMsg()).put("data", errorMap);
     }
 
     @ExceptionHandler(value = Throwable.class)
-    public R handleException(Throwable throwable){
+    public R handleException(Throwable throwable) {
 
-        log.error("错误：",throwable);
-        return R.error(AdminEnum.UNKNOW_EXCEPTION.getCode(),AdminEnum.UNKNOW_EXCEPTION.getMsg());
+        log.error("错误：", throwable);
+        return R.error(AdminEnum.UNKNOW_EXCEPTION.getCode(), AdminEnum.UNKNOW_EXCEPTION.getMsg());
     }
 
 
@@ -51,17 +51,31 @@ public class AdminExceptionControllerAdvice {
      */
     @ExceptionHandler(value = NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public R handlerNoHandlerFoundException(NoHandlerFoundException exception) {
+    public R handlerNoHandlerFoundException(NoHandlerFoundException e) {
+        e.printStackTrace();
         return R.error(AdminEnum.NOT_FOUND.getCode(), AdminEnum.NOT_FOUND.getMsg());
     }
 
     @ExceptionHandler(DuplicateKeyException.class)
-    public R handleDuplicateKeyException(DuplicateKeyException e){
+    public R handleDuplicateKeyException(DuplicateKeyException e) {
         log.error(e.getMessage(), e);
         return R.error("数据库中已存在该记录");
     }
 
 
+ /*   @ExceptionHandler(value = RedisConnectionException.class)
+    public R handlerRedisConnectionException(RedisConnectionException e) {
+        e.printStackTrace();
+//        log.error(e.getMessage());
+        return R.error(AdminEnum.INTERNAL_SERVER_ERROR.getCode(), AdminEnum.INTERNAL_SERVER_ERROR.getMsg());
+    }
+
+    @ExceptionHandler(value = RedisCommandTimeoutException.class)
+    public R handlerRedisCommandTimeoutException(RedisCommandTimeoutException e) {
+        e.printStackTrace();
+//        log.error(e.getMessage());
+        return R.error(AdminEnum.INTERNAL_SERVER_ERROR.getCode(), AdminEnum.INTERNAL_SERVER_ERROR.getMsg());
+    }*/
 
 
     /**

@@ -1,6 +1,10 @@
 package com.qian.gulimall.common.utils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,6 +47,41 @@ public class IPUtils {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
             ip = request.getRemoteAddr();
         }
-        return ip.equals("0:0:0:0:0:0:0:1") ? "127.0.0.1" : ip;
+        return ip.equals("0:0:0:0:0:0:0:1") ? getLocalHostIpAddress() : ip;
+    }
+
+    /**
+     * 获取本机IP地址
+     *
+     * @return
+     */
+    private static String getLocalHostIpAddress() {
+        try {
+            Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
+            String siteLocalAddress = null;
+            while (ifaces.hasMoreElements()) {
+                NetworkInterface iface = ifaces.nextElement();
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    String hostAddress = addr.getHostAddress();
+                    if (addr instanceof Inet4Address
+                            && !addr.isLoopbackAddress()
+                            && !hostAddress.startsWith("192.168")
+                            && !hostAddress.startsWith("172.")
+                            && !hostAddress.startsWith("169.")) {
+                        if (addr.isSiteLocalAddress()) {
+                            siteLocalAddress = hostAddress;
+                        } else {
+                            return hostAddress;
+                        }
+                    }
+                }
+            }
+            return siteLocalAddress == null ? "" : siteLocalAddress;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "127.0.0.1";
     }
 }

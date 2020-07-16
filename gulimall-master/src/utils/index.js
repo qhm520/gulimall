@@ -25,7 +25,6 @@ export function isAuth (key) {
  * @param {*} pid
  */
 export function treeDataTranslate (data, id = 'id', pid = 'parentId') {
-  debugger
   var res = []
   var temp = {}
   for (var i = 0; i < data.length; i++) {

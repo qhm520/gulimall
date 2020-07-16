@@ -1,19 +1,24 @@
 package com.qian.gulimall.admin.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import com.qian.gulimall.admin.entity.SysRoleEntity;
+import com.qian.gulimall.admin.service.SysRoleService;
+import com.qian.gulimall.common.entity.vo.UserDetailsVo;
+import com.qian.gulimall.common.utils.Constant;
+import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.qian.gulimall.admin.entity.SysRoleEntity;
-import com.qian.gulimall.admin.service.SysRoleService;
-import com.qian.gulimall.common.utils.PageUtils;
-import com.qian.gulimall.common.utils.R;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -41,6 +46,23 @@ public class SysRoleController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 角色列表
+     */
+    @GetMapping("/select")
+//    @RequiresPermissions("sys:role:select")
+    public R select(Authentication authentication){
+        Map<String, Object> map = new HashMap<>();
+        //如果不是超级管理员，则只查询自己创建的角色列表
+        UserDetailsVo userDetailsVo = (UserDetailsVo)authentication.getPrincipal();
+        if(userDetailsVo.getUserId() != Constant.SUPER_ADMIN){
+            map.put("create_user_id", userDetailsVo.getUserId());
+        }
+        List<SysRoleEntity> list = (List<SysRoleEntity>) sysRoleService.listByMap(map);
+
+        return R.ok().put("list", list);
+    }
+
 
     /**
      * 信息
@@ -50,7 +72,7 @@ public class SysRoleController {
     public R info(@PathVariable("roleId") Long roleId){
 		SysRoleEntity sysRole = sysRoleService.getById(roleId);
 
-        return R.ok().put("sysRole", sysRole);
+        return R.ok().put("role", sysRole);
     }
 
     /**

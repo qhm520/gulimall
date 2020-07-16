@@ -1,5 +1,6 @@
 package com.qian.gulimall.common.entity.vo;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * Date 2020/04/20
  * Time 16:59
  */
+@Builder
 @Data
 public class LoginInfoVo implements Serializable {
 

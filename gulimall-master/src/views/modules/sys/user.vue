@@ -85,12 +85,12 @@
         label="操作">
         <template slot-scope="scope">
           <el-button v-if="isAuth('sys:user:update')" type="primary" size="small"
-                     @click="addOrUpdateHandle(scope.row.userId)">
+                     @click.stop="addOrUpdateHandle(scope.row.userId)">
             <icon-svg name="edit"/>
             修改
           </el-button>
           <el-button v-if="isAuth('sys:user:delete')" type="danger" size="small"
-                     @click="deleteHandle(scope.row.userId)">
+                     @click.stop="deleteHandle(scope.row.userId)">
             <icon-svg name="delete"/>
             删除
           </el-button>
@@ -104,7 +104,7 @@
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      background="true"
+      background
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->

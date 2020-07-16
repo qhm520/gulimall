@@ -1,11 +1,11 @@
 package com.qian.gulimall.admin.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.qian.gulimall.admin.entity.SysMenuEntity;
+import com.qian.gulimall.admin.service.SysMenuService;
+import com.qian.gulimall.common.annotation.SysLog;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
+import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.qian.gulimall.admin.entity.SysMenuEntity;
-import com.qian.gulimall.admin.service.SysMenuService;
-import com.qian.gulimall.common.utils.PageUtils;
-import com.qian.gulimall.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 
@@ -57,9 +57,27 @@ public class SysMenuController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 选择菜单(添加、修改菜单)
+     */
+    @GetMapping("/select")
+    public R select(){
+        //查询列表数据
+        List<SysMenuEntity> menuList = sysMenuService.queryNotButtonList();
+
+        //添加顶级菜单
+        SysMenuEntity root = new SysMenuEntity();
+        root.setMenuId(0L);
+        root.setName("一级菜单");
+        root.setParentId(-1L);
+        root.setOpen(true);
+        menuList.add(root);
+
+        return R.ok().put("menuList", menuList);
+    }
 
     /**
-     * 信息
+     * 菜单信息
      */
     @RequestMapping("/info/{menuId}")
     //@RequiresPermissions("admin:sysmenu:info")
@@ -72,6 +90,7 @@ public class SysMenuController {
     /**
      * 保存
      */
+    @SysLog("保存菜单")
     @RequestMapping("/save")
     //@RequiresPermissions("admin:sysmenu:save")
     public R save(@RequestBody SysMenuEntity sysMenu){
@@ -83,6 +102,7 @@ public class SysMenuController {
     /**
      * 修改
      */
+    @SysLog("修改菜单")
     @RequestMapping("/update")
     //@RequiresPermissions("admin:sysmenu:update")
     public R update(@RequestBody SysMenuEntity sysMenu){
@@ -94,6 +114,7 @@ public class SysMenuController {
     /**
      * 删除
      */
+    @SysLog("删除菜单")
     @RequestMapping("/delete")
     //@RequiresPermissions("admin:sysmenu:delete")
     public R delete(@RequestBody Long[] menuIds){

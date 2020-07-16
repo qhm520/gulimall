@@ -1,10 +1,9 @@
 package com.qian.gulimall.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.admin.entity.SysRoleMenuEntity;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 角色与菜单对应关系
@@ -15,6 +14,16 @@ import java.util.Map;
  */
 public interface SysRoleMenuService extends IService<SysRoleMenuEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    void saveOrUpdate(Long roleId, List <Long> menuIdList);
+
+    /**
+     * 根据角色ID，获取菜单ID列表
+     */
+    List<Long> queryMenuIdList(Long roleId);
+
+    /**
+     * 根据角色ID数组，批量删除
+     */
+    int deleteBatch(Long[] roleIds);
 }
 

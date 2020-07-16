@@ -7,6 +7,7 @@ import com.qian.gulimall.admin.dao.SysMenuDao;
 import com.qian.gulimall.admin.entity.SysMenuEntity;
 import com.qian.gulimall.admin.entity.SysRoleMenuEntity;
 import com.qian.gulimall.admin.entity.SysUserRoleEntity;
+import com.qian.gulimall.admin.service.SysUserService;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
 import com.qian.gulimall.admin.service.SysMenuService;
 import com.qian.gulimall.admin.service.SysRoleMenuService;
@@ -37,6 +38,9 @@ public class SysMenuServiceImpl extends ServiceImpl <SysMenuDao, SysMenuEntity> 
     @Autowired
     private SysMenuService sysMenuService;
 
+    @Autowired
+    private SysUserService sysUserService;
+
     @Override
     public List <SysMenuEntity> queryListParentId(Long parentId, List <Long> menuIdList) {
         List <SysMenuEntity> menuList = queryListParentId(parentId);
@@ -45,18 +49,36 @@ public class SysMenuServiceImpl extends ServiceImpl <SysMenuDao, SysMenuEntity> 
         }
 
         List <SysMenuEntity> userMenuList = new ArrayList <>();
-/*        for (SysMenuEntity menu : menuList) {
-            if (menuIdList.contains(menu.getMenuId())) {
-                userMenuList.add(menu);
-            }
-        }*/
         menuList.stream()
                 .filter(menu -> menuIdList.contains(menu.getMenuId()))
                 .forEach(menu -> userMenuList.add(menu));
         return userMenuList;
     }
 
-    private List<SysMenuEntity> queryListParentId(Long parentId) {
+    @Override
+    public List <SysMenuEntity> queryNotButtonList() {
+        return baseMapper.queryNotButtonList();
+    }
+
+    @Override
+    public List <SysMenuEntity> getUserMenuList(Long userId) {
+        //系统管理员，拥有最高权限
+        if(userId == Constant.SUPER_ADMIN){
+            return getAllMenuList(null);
+        }
+
+        //用户菜单列表
+        List<Long> menuIdList = sysUserService.queryAllMenuId(userId);
+        return getAllMenuList(menuIdList);
+    }
+
+    @Override
+    public void delete(Long menuId) {
+
+    }
+
+    @Override
+    public List<SysMenuEntity> queryListParentId(Long parentId) {
         return baseMapper.selectList(new QueryWrapper <SysMenuEntity>().eq("parent_id", parentId));
     }
 
@@ -84,6 +106,8 @@ public class SysMenuServiceImpl extends ServiceImpl <SysMenuDao, SysMenuEntity> 
                 return getAllMenuList(sysMenuEntityList.stream().map(menu -> menu.getMenuId()).collect(Collectors.toList()));
             }
         } else {
+            // TODO  先查询redis缓存，如果没有再数据库，把查询到数据放入缓存
+
             //用户菜单列表
             List <SysUserRoleEntity> sysUserRoleEntityList = sysUserRoleService.list(new QueryWrapper <SysUserRoleEntity>().eq("user_id", userDetailsVo.getUserId()));
             if (!CollectionUtils.isEmpty(sysUserRoleEntityList)) {

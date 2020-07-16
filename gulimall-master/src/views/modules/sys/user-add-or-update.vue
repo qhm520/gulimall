@@ -3,15 +3,16 @@
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
+             label-width="80px">
       <el-form-item label="用户名" prop="userName">
         <el-input v-model="dataForm.userName" placeholder="登录帐号"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password" :class="{ 'is-required': !dataForm.id }">
         <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
       </el-form-item>
-      <el-form-item label="确认密码" prop="comfirmPassword" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.comfirmPassword" type="password" placeholder="确认密码"></el-input>
+      <el-form-item label="确认密码" prop="confirmPassword" :class="{ 'is-required': !dataForm.id }">
+        <el-input v-model="dataForm.confirmPassword" type="password" placeholder="确认密码"></el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
@@ -20,8 +21,10 @@
         <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
       </el-form-item>
       <el-form-item label="角色" size="mini" prop="roleIdList">
-        <el-checkbox-group v-model="dataForm.roleIdList">
-          <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
+        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+        <div style="margin: 15px 0;"></div>
+        <el-checkbox-group v-model="dataForm.roleIdList" @change="handleCheckedChange">
+          <el-checkbox v-for="(role, index) in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="状态" size="mini" prop="status">
@@ -32,24 +35,25 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false"><icon-svg name="cancel"/>&nbsp;取消</el-button>
+      <el-button type="primary" @click="dataFormSubmit()"><icon-svg name="confirm"/>&nbsp;确定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-  import { isEmail, isMobile } from '@/utils/validate'
+  import {isEmail, isMobile} from '@/utils/validate'
+
   export default {
-    data () {
-      var validatePassword = (rule, value, callback) => {
+    data() {
+      let validatePassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
           callback(new Error('密码不能为空'))
         } else {
           callback()
         }
       }
-      var validateComfirmPassword = (rule, value, callback) => {
+      let validateConfirmPassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
           callback(new Error('确认密码不能为空'))
         } else if (this.dataForm.password !== value) {
@@ -58,57 +62,73 @@
           callback()
         }
       }
-      var validateEmail = (rule, value, callback) => {
+      let validateEmail = (rule, value, callback) => {
         if (!isEmail(value)) {
           callback(new Error('邮箱格式错误'))
         } else {
           callback()
         }
       }
-      var validateMobile = (rule, value, callback) => {
+      let validateMobile = (rule, value, callback) => {
         if (!isMobile(value)) {
           callback(new Error('手机号格式错误'))
         } else {
           callback()
         }
       }
+
       return {
         visible: false,
         roleList: [],
+        checkAll: false,
+        isIndeterminate: true,
+        checkedCities: [],
         dataForm: {
           id: 0,
           userName: '',
           password: '',
-          comfirmPassword: '',
+          confirmPassword: '',
           salt: '',
           email: '',
           mobile: '',
           roleIdList: [],
-          status: 1
+          status: 1,
+
         },
         dataRule: {
           userName: [
-            { required: true, message: '用户名不能为空', trigger: 'blur' }
+            {required: true, message: '用户名不能为空', trigger: 'blur'}
           ],
           password: [
-            { validator: validatePassword, trigger: 'blur' }
+            {validator: validatePassword, trigger: 'blur'}
           ],
-          comfirmPassword: [
-            { validator: validateComfirmPassword, trigger: 'blur' }
+          confirmPassword: [
+            {validator: validateConfirmPassword, trigger: 'blur'}
           ],
           email: [
-            { required: true, message: '邮箱不能为空', trigger: 'blur' },
-            { validator: validateEmail, trigger: 'blur' }
+            {required: true, message: '邮箱不能为空', trigger: 'blur'},
+            {validator: validateEmail, trigger: 'blur'}
           ],
           mobile: [
-            { required: true, message: '手机号不能为空', trigger: 'blur' },
-            { validator: validateMobile, trigger: 'blur' }
+            {required: true, message: '手机号不能为空', trigger: 'blur'},
+            {validator: validateMobile, trigger: 'blur'}
           ]
         }
       }
     },
     methods: {
-      init (id) {
+      // 全选
+      handleCheckAllChange(val) {
+        this.dataForm.roleIdList = val ? this.roleList.map(e => e.roleId) : [];
+        this.isIndeterminate = false;
+      },
+      // 点击选择时
+      handleCheckedChange(value) {
+        let checkedCount = value.length;
+        this.checkAll = checkedCount === this.roleList.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.roleList.length;
+      },
+      init(id) {
         this.dataForm.id = id || 0
         this.$http({
           url: this.$http.adornUrl('/sys/role/select'),
@@ -133,15 +153,17 @@
                 this.dataForm.salt = data.user.salt
                 this.dataForm.email = data.user.email
                 this.dataForm.mobile = data.user.mobile
-                this.dataForm.roleIdList = data.user.roleIdList
+                this.dataForm.roleIdList = data.user.roleIdList || [] // 不能为null，会有异常
                 this.dataForm.status = data.user.status
+                // 是否全选
+                this.handleCheckedChange(this.dataForm.roleIdList)
               }
             })
           }
         })
       },
       // 表单提交
-      dataFormSubmit () {
+      dataFormSubmit() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
