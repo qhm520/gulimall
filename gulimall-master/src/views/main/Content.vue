@@ -21,7 +21,7 @@
         :key="item.name"
         :label="item.title"
         :name="item.name"
-        >
+      >
         <el-card :body-style="siteContentViewHeight">
           <iframe
             v-if="item.type === 'iframe'"
@@ -46,6 +46,7 @@
 <script>
   import { isURL } from '@/utils/validate'
   export default {
+    name: 'Content',
     inject: ['refresh'],
     data () {
       return {

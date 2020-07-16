@@ -24,7 +24,7 @@ const globalRoutes = [
 // 主入口路由(需嵌套上左右整体布局)
 const mainRoutes = {
   path: '/',
-  component: _import('main'),
+  component: _import('main/Main'),
   name: 'main',
   redirect: {name: 'home'},
   meta: {title: '主入口整体布局'},
@@ -140,7 +140,7 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
         route['meta']['iframeUrl'] = menuList[i].url
       } else {
         try {
-          route['component'] = _import(`modules/${menuList[i].url}`) || null
+          route['component'] = _import(`${menuList[i].url}`) || null
         } catch (e) {}
       }
       routes.push(route)

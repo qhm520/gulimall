@@ -45,6 +45,7 @@
   import {isEmail, isMobile} from '@/utils/validate'
 
   export default {
+    name: 'UserDialog',
     data() {
       let validatePassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
@@ -200,3 +201,7 @@
     }
   }
 </script>
+
+<style scoped>
+
+</style>

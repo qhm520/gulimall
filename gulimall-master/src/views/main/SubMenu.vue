@@ -21,9 +21,9 @@
 </template>
 
 <script>
-  import SubMenu from './main-sidebar-sub-menu'
+  import SubMenu from './SubMenu'
   export default {
-    name: 'sub-menu',
+    name: 'SubMenu',
     props: {
       menu: {
         type: Object,

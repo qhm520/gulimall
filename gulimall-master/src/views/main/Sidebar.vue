@@ -23,9 +23,10 @@
 </template>
 
 <script>
-  import SubMenu from './main-sidebar-sub-menu'
+  import SubMenu from './SubMenu'
   import { isURL } from '@/utils/validate'
   export default {
+    name: 'Sidebar',
     data () {
       return {
         dynamicMenuRoutes: []

@@ -49,14 +49,15 @@
       </el-menu>
     </div>
     <!-- 弹窗, 修改密码 -->
-    <update-password v-if="updatePassowrdVisible" ref="updatePassowrd"></update-password>
+    <update-password-dialog v-if="updatePassowrdVisible" ref="updatePassowrd"></update-password-dialog>
   </nav>
 </template>
 
 <script>
-  import UpdatePassword from './main-navbar-update-password'
+  import UpdatePasswordDialog from './UpdatePasswordDialog'
   import { clearLoginInfo } from '@/utils'
   export default {
+    name: 'Navbar',
     data () {
       return {
         updatePassowrdVisible: false,
@@ -66,7 +67,7 @@
       }
     },
     components: {
-      UpdatePassword
+      UpdatePasswordDialog
     },
     computed: {
       navbarLayoutType: {

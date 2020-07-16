@@ -31,6 +31,7 @@
 <script>
   import { treeDataTranslate } from '@/utils'
   export default {
+    name: 'RoleDialog',
     data () {
       return {
         visible: false,

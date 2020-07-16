@@ -15,10 +15,11 @@
 </template>
 
 <script>
-  import MainNavbar from './main-navbar'
-  import MainSidebar from './main-sidebar'
-  import MainContent from './main-content'
+  import MainNavbar from './Navbar'
+  import MainSidebar from './Sidebar'
+  import MainContent from './Content'
   export default {
+    name: 'Main',
     provide () {
       return {
         // 刷新

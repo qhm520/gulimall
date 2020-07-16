@@ -78,13 +78,13 @@
       </el-table-column>
     </el-table>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <menu-dialog v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></menu-dialog>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './menu-add-or-update'
   import { treeDataTranslate } from '@/utils'
+  import MenuDialog from "./MenuDialog";
   export default {
     data () {
       return {
@@ -95,7 +95,7 @@
       }
     },
     components: {
-      AddOrUpdate
+      MenuDialog
     },
     activated () {
       this.getDataList()

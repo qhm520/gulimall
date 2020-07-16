@@ -81,6 +81,7 @@
   import { treeDataTranslate } from '@/utils'
   import Icon from '@/icons'
   export default {
+    name: 'MenuDialog',
     data () {
       var validateUrl = (rule, value, callback) => {
         if (this.dataForm.type === 1 && !/\S/.test(value)) {

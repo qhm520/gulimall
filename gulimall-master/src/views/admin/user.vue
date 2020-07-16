@@ -5,7 +5,7 @@
         <el-input v-model="dataForm.userName" placeholder="用户名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">
+        <el-button type="success" @click="getDataList()">
           <icon-svg name="search"/>
           查询
         </el-button>
@@ -84,7 +84,7 @@
         width="180"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:user:update')" type="primary" size="small"
+          <el-button v-if="isAuth('sys:user:update')" type="warning" size="small"
                      @click.stop="addOrUpdateHandle(scope.row.userId)">
             <icon-svg name="edit"/>
             修改
@@ -108,12 +108,12 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <user-dialog v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></user-dialog>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './user-add-or-update'
+  import UserDialog from "./UserDialog";
 
   export default {
     data () {
@@ -131,7 +131,7 @@
       }
     },
     components: {
-      AddOrUpdate
+      UserDialog
     },
     activated () {
       this.getDataList()

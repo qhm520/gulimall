@@ -5,9 +5,9 @@
         <el-input v-model="dataForm.paramKey" placeholder="参数名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="success" @click="getDataList()">  <icon-svg name="search"/>查询</el-button>
+        <el-button type="primary" @click="addOrUpdateHandle()">  <icon-svg name="add"/>新增</el-button>
+        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">  <icon-svg name="delete"/>批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -51,11 +51,11 @@
         fixed="right"
         header-align="center"
         align="center"
-        width="150"
+        width="180"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button type="warning" size="small" @click="addOrUpdateHandle(scope.row.id)"><icon-svg name="edit"/>修改</el-button>
+          <el-button type="danger" size="small" @click="deleteHandle(scope.row.id)"><icon-svg name="delete"/>删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -66,15 +66,16 @@
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
+      background
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <config-dialog v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></config-dialog>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './config-add-or-update'
+  import ConfigDialog from "./ConfigDialog";
   export default {
     data () {
       return {
@@ -91,7 +92,7 @@
       }
     },
     components: {
-      AddOrUpdate
+      ConfigDialog
     },
     activated () {
       this.getDataList()

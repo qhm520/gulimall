@@ -23,6 +23,7 @@
 
 <script>
   export default {
+    name: 'ConfigDialog',
     data () {
       return {
         visible: false,
@@ -55,9 +56,9 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.paramKey = data.config.paramKey
-                this.dataForm.paramValue = data.config.paramValue
-                this.dataForm.remark = data.config.remark
+                this.dataForm.paramKey = data.sysConfig.paramKey
+                this.dataForm.paramValue = data.sysConfig.paramValue
+                this.dataForm.remark = data.sysConfig.remark
               }
             })
           }
