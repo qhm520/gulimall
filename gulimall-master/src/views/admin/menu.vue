@@ -1,7 +1,7 @@
 <template>
   <div class="mod-menu">
     <operation>
-      <div style="margin-right: 180px">
+      <div style="margin-right: 200px">
         <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>&nbsp;新增菜单</el-button>
       </div>
     </operation>
