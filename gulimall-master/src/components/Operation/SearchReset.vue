@@ -1,0 +1,29 @@
+<template>
+  <el-form-item style="float: right">
+    <el-button-group>
+      <el-button class="blue-background" @click="search">
+        <icon-svg name="search"/>
+        查询
+      </el-button>
+      <el-button class="blue-background" @click="reset">
+        <icon-svg name="clear"/>
+        重置
+      </el-button>
+    </el-button-group>
+  </el-form-item>
+</template>
+
+<script>
+  export default {
+    name: "SearchReset",
+    props: {
+      search: Function,
+      reset: Function,
+    },
+    methods: {}
+  }
+</script>
+
+<style scoped>
+
+</style>

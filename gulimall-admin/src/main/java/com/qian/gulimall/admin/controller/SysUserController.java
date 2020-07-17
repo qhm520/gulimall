@@ -1,25 +1,26 @@
 package com.qian.gulimall.admin.controller;
 
+import com.qian.gulimall.admin.api.criteria.SysUserCriteria;
 import com.qian.gulimall.admin.entity.SysUserEntity;
 import com.qian.gulimall.admin.service.SysUserRoleService;
 import com.qian.gulimall.admin.service.SysUserService;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
 import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -43,8 +44,8 @@ public class SysUserController {
      */
     @RequestMapping("/list")
     //@RequiresPermissions("admin:sysuser:list")
-    public R list(@RequestParam Map<String, Object> params) {
-        PageUtils page = sysUserService.queryPage(params);
+    public R list(Pageable pageable, @ModelAttribute SysUserCriteria sysUserCriteria) {
+        PageUtils page = sysUserService.queryPage(pageable, sysUserCriteria);
 
         return R.ok().put("page", page);
     }

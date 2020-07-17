@@ -4,7 +4,6 @@ import com.qian.gulimall.admin.entity.SysMenuEntity;
 import com.qian.gulimall.admin.service.SysMenuService;
 import com.qian.gulimall.common.annotation.SysLog;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
-import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -13,12 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -47,14 +44,20 @@ public class SysMenuController {
     }
 
     /**
-     * 列表
+     * 所有菜单列表
      */
-    @RequestMapping("/list")
-    //@RequiresPermissions("admin:sysmenu:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = sysMenuService.queryPage(params);
+    @GetMapping("/list")
+//    @RequiresPermissions("sys:menu:list")
+    public List<SysMenuEntity> list(){
+        List<SysMenuEntity> menuList = sysMenuService.list();
+        for(SysMenuEntity sysMenuEntity : menuList){
+            SysMenuEntity parentMenuEntity = sysMenuService.getById(sysMenuEntity.getParentId());
+            if(parentMenuEntity != null){
+                sysMenuEntity.setParentName(parentMenuEntity.getName());
+            }
+        }
 
-        return R.ok().put("page", page);
+        return menuList;
     }
 
     /**

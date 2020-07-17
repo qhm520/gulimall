@@ -134,6 +134,7 @@
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
+          console.log(data)
           this.menuList = treeDataTranslate(data.menuList, 'menuId')
         }).then(() => {
           this.visible = true
@@ -151,14 +152,14 @@
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
-              this.dataForm.id = data.menu.menuId
-              this.dataForm.type = data.menu.type
-              this.dataForm.name = data.menu.name
-              this.dataForm.parentId = data.menu.parentId
-              this.dataForm.url = data.menu.url
-              this.dataForm.perms = data.menu.perms
-              this.dataForm.orderNum = data.menu.orderNum
-              this.dataForm.icon = data.menu.icon
+              this.dataForm.id = data.sysMenu.menuId
+              this.dataForm.type = data.sysMenu.type
+              this.dataForm.name = data.sysMenu.name
+              this.dataForm.parentId = data.sysMenu.parentId
+              this.dataForm.url = data.sysMenu.url
+              this.dataForm.perms = data.sysMenu.perms
+              this.dataForm.orderNum = data.sysMenu.orderNum
+              this.dataForm.icon = data.sysMenu.icon
               this.menuListTreeSetCurrentNode()
             })
           }

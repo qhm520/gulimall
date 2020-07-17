@@ -3,12 +3,10 @@ package com.qian.gulimall.admin.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-
-import lombok.Data;
 
 /**
  * 菜单管理
@@ -31,6 +29,13 @@ public class SysMenuEntity implements Serializable {
 	 * 父菜单ID，一级菜单为0
 	 */
 	private Long parentId;
+
+	/**
+	 * 父菜单名称
+	 */
+	@TableField(exist=false)
+	private String parentName;
+
 	/**
 	 * 菜单名称
 	 */

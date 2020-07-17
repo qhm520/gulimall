@@ -1,8 +1,8 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
+    <dialog-title :is-add="!dataForm.id" :title="!dataForm.id ? '新增用户' : '修改用户'"></dialog-title>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
              label-width="80px">
       <el-form-item label="用户名" prop="userName">
@@ -24,7 +24,8 @@
         <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
         <div style="margin: 15px 0;"></div>
         <el-checkbox-group v-model="dataForm.roleIdList" @change="handleCheckedChange">
-          <el-checkbox v-for="(role, index) in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
+          <el-checkbox v-for="(role, index) in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}
+          </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="状态" size="mini" prop="status">
@@ -42,10 +43,12 @@
 </template>
 
 <script>
-  import {isEmail, isMobile} from '@/utils/validate'
+  import {isEmail, isMobile} from '../../utils/validate';
+  import DialogTitle from "../../components/Operation/DialogTitle";
 
   export default {
     name: 'UserDialog',
+    components: {DialogTitle},
     data() {
       let validatePassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {

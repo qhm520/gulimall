@@ -3,13 +3,17 @@ package com.qian.gulimall.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qian.gulimall.admin.api.criteria.SysUserCriteria;
+import com.qian.gulimall.admin.api.result.SysUserResult;
 import com.qian.gulimall.admin.dao.SysUserDao;
 import com.qian.gulimall.admin.entity.SysUserEntity;
 import com.qian.gulimall.admin.service.SysRoleService;
 import com.qian.gulimall.admin.service.SysUserRoleService;
 import com.qian.gulimall.admin.service.SysUserService;
+import com.qian.gulimall.common.utils.BeanKit;
 import com.qian.gulimall.common.utils.Constant;
 import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.Query;
 import com.qian.gulimall.common.utils.RRException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -38,19 +41,30 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * 分页查询用户信息
+     * @param pageable 分页
+     * @param sysUserCriteria 查询条件
+     * @return
+     */
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        String username = (String)params.get("username");
-        Long createUserId = (Long)params.get("createUserId");
-
+    public PageUtils queryPage(Pageable pageable, SysUserCriteria sysUserCriteria) {
         IPage<SysUserEntity> page = this.page(
-                new Query<SysUserEntity>().getPage(params),
+                // 分页
+                new Query<SysUserEntity>().getPage(pageable),
+                // 查询条件
                 new QueryWrapper<SysUserEntity>()
-                        .like(StringUtils.isNotBlank(username),"username", username)
-                        .eq(createUserId != null,"create_user_id", createUserId)
+                        // username
+                        .like(StringUtils.isNotBlank(sysUserCriteria.getUsername()),"username", sysUserCriteria.getUsername())
+                        // mobile
+                        .like(StringUtils.isNotBlank(sysUserCriteria.getMobile()),"mobile", sysUserCriteria.getMobile())
+                        // status
+                        .eq(null != sysUserCriteria.getStatus(), "status", sysUserCriteria.getStatus())
+                        // create_time
+                        .between((sysUserCriteria.getCreateTimeStart() != null && sysUserCriteria.getCreateTimeEnd() != null), "create_time", sysUserCriteria.getCreateTimeStart(), sysUserCriteria.getCreateTimeEnd())
         );
-
-        return new PageUtils(page);
+        // 封装返回数据到result对象中
+        return new PageUtils(page, BeanKit.convertList(SysUserResult.class, page.getRecords()));
     }
 
     @Override

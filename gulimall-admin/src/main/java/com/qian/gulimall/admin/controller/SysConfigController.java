@@ -3,7 +3,10 @@ package com.qian.gulimall.admin.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.qian.gulimall.admin.api.criteria.SysConfigCriteria;
+import com.qian.gulimall.common.utils.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +38,8 @@ public class SysConfigController {
      */
     @RequestMapping("/list")
     //@RequiresPermissions("admin:sysconfig:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = sysConfigService.queryPage(params);
+    public R list(Pageable pageable, @ModelAttribute SysConfigCriteria sysConfigCriteria){
+        PageUtils page = sysConfigService.queryPage(pageable, sysConfigCriteria);
 
         return R.ok().put("page", page);
     }

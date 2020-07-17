@@ -3,14 +3,18 @@ package com.qian.gulimall.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qian.gulimall.admin.api.criteria.SysRoleCriteria;
+import com.qian.gulimall.admin.api.result.SysRoleResult;
 import com.qian.gulimall.admin.dao.SysRoleDao;
 import com.qian.gulimall.admin.entity.SysRoleEntity;
 import com.qian.gulimall.admin.service.SysRoleMenuService;
 import com.qian.gulimall.admin.service.SysRoleService;
 import com.qian.gulimall.admin.service.SysUserRoleService;
 import com.qian.gulimall.admin.service.SysUserService;
+import com.qian.gulimall.common.utils.BeanKit;
 import com.qian.gulimall.common.utils.Constant;
 import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.Query;
 import com.qian.gulimall.common.utils.RRException;
 import org.apache.commons.lang.StringUtils;
@@ -21,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 @Service("sysRoleService")
@@ -35,18 +38,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
     private SysUserRoleService sysUserRoleService;
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        String roleName = (String)params.get("roleName");
-        Long createUserId = (Long)params.get("createUserId");
+    public PageUtils queryPage(Pageable pageable, SysRoleCriteria sysRoleCriteria) {
 
         IPage<SysRoleEntity> page = this.page(
-                new Query<SysRoleEntity>().getPage(params),
+                new Query<SysRoleEntity>().getPage(pageable),
                 new QueryWrapper<SysRoleEntity>()
-                        .like(StringUtils.isNotBlank(roleName),"role_name", roleName)
-                        .eq(createUserId != null,"create_user_id", createUserId)
+                        // role_name
+                        .like(StringUtils.isNotBlank(sysRoleCriteria.getRoleName()),"role_name", sysRoleCriteria.getRoleName())
+                        // create_time
+                        .between((sysRoleCriteria.getCreateTimeStart() != null && sysRoleCriteria.getCreateTimeEnd() != null), "create_time", sysRoleCriteria.getCreateTimeStart(), sysRoleCriteria.getCreateTimeEnd())
         );
 
-        return new PageUtils(page);
+        return new PageUtils(page, BeanKit.convertList(SysRoleResult.class, page.getRecords()));
     }
 
     @Override

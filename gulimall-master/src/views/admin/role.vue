@@ -1,15 +1,33 @@
 <template>
   <div class="mod-role">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
+    <el-form rel="queryCriteria" :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+      <el-form-item label="角色名称" prop="roleName">
         <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button type="success" @click="getDataList()"><icon-svg name="search"/>查询</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"> <icon-svg name="delete"/>批量删除</el-button>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-date-picker
+          v-model="dataForm.createTime"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item style="float: right">
+        <el-button-group>
+          <el-button type="success" @click="getDataList()"><icon-svg name="search"/>查询</el-button>
+          <el-button type="warning" @click="clear()">
+            <icon-svg name="clear"/>
+            清空
+          </el-button>
+        </el-button-group>
+
       </el-form-item>
     </el-form>
+    <el-button-group>
+      <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>新增</el-button>
+      <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"> <icon-svg name="delete"/>批量删除</el-button>
+    </el-button-group>
     <el-table
       :data="dataList"
       border
@@ -21,6 +39,14 @@
         header-align="center"
         align="center"
         width="50">
+      </el-table-column>
+      <el-table-column
+        label="序号"
+        align="center"
+        width="70px">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="roleId"
@@ -55,8 +81,10 @@
         width="180"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="warning" size="small" @click="addOrUpdateHandle(scope.row.roleId)"><icon-svg name="edit"/>修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="danger" size="small" @click="deleteHandle(scope.row.roleId)"><icon-svg name="delete"/>删除</el-button>
+          <el-button-group>
+            <el-button v-if="isAuth('sys:role:update')" type="warning" size="small" @click="addOrUpdateHandle(scope.row.roleId)"><icon-svg name="edit"/>修改</el-button>
+            <el-button v-if="isAuth('sys:role:delete')" type="danger" size="small" @click="deleteHandle(scope.row.roleId)"><icon-svg name="delete"/>删除</el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -81,7 +109,8 @@
     data () {
       return {
         dataForm: {
-          roleName: ''
+          roleName: '', // 角色名称
+          createTime: ['', '']  // 创建时间
         },
         dataList: [],
         pageIndex: 1,
@@ -99,6 +128,12 @@
       this.getDataList()
     },
     methods: {
+      /**
+       * 重置查询条件
+       */
+      clear () {
+        this.$refs.queryCriteria.resetFields();
+      },
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true

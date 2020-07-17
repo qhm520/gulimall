@@ -1,11 +1,12 @@
 package com.qian.gulimall.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qian.gulimall.admin.api.criteria.SysUserCriteria;
 import com.qian.gulimall.admin.entity.SysUserEntity;
 import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 系统用户
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public interface SysUserService extends IService<SysUserEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Pageable pageable, SysUserCriteria sysUserCriteria);
 
     /**
      * 查询用户的所有权限

@@ -1,8 +1,10 @@
 package com.qian.gulimall.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qian.gulimall.admin.api.criteria.SysRoleCriteria;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.admin.entity.SysRoleEntity;
+import com.qian.gulimall.common.utils.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,7 @@ import java.util.Map;
  */
 public interface SysRoleService extends IService<SysRoleEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Pageable pageable, SysRoleCriteria sysRoleCriteria);
 
     void saveRole(SysRoleEntity role);
 

@@ -18,12 +18,13 @@ public class SysCaptchaServiceImpl extends ServiceImpl<SysCaptchaDao, SysCaptcha
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<SysCaptchaEntity> page = this.page(
-                new Query<SysCaptchaEntity>().getPage(params),
-                new QueryWrapper<SysCaptchaEntity>()
-        );
-
-        return new PageUtils(page);
+//        IPage<SysCaptchaEntity> page = this.page(
+//                new Query<SysCaptchaEntity>().getPage(params),
+//                new QueryWrapper<SysCaptchaEntity>()
+//        );
+//
+//        return new PageUtils(page);
+        return null;
     }
 
 }

@@ -18,12 +18,13 @@ public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenDao, SysUse
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<SysUserTokenEntity> page = this.page(
-                new Query <SysUserTokenEntity>().getPage(params),
-                new QueryWrapper<SysUserTokenEntity>()
-        );
-
-        return new PageUtils(page);
+//        IPage<SysUserTokenEntity> page = this.page(
+//                new Query <SysUserTokenEntity>().getPage(params),
+//                new QueryWrapper<SysUserTokenEntity>()
+//        );
+//
+//        return new PageUtils(page);
+        return null;
     }
 
 }

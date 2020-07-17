@@ -65,12 +65,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (sysUserEntity == null) {
             throw new UsernameNotFoundException("账户不存在");
         }
-
+        // TODO 要改为用redis缓存
         //系统管理员，拥有最高权限
         if (sysUserEntity.getUserId() == Constant.SUPER_ADMIN) {
             List <SysMenuEntity> list = sysMenuService.list();
             if (!CollectionUtils.isEmpty(list)) {
-                list.stream().filter(menu -> StringUtils.isNotBlank(menu.getPerms())).forEach(menu -> perms.add(menu.getPerms()));
+                list.stream().filter(menu -> StringUtils.isNotBlank(menu.getPerms())).forEach(menu -> perms.add(menu.getPerms().trim()));
             }
         } else {
             List <SysUserRoleEntity> sysUserRoleEntityList = sysUserRoleService.list(new QueryWrapper <SysUserRoleEntity>().eq("user_id", sysUserEntity.getUserId()));
@@ -87,7 +87,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             }
         }
         log.info("登陆用户名：" + s + "登陆成功");
-        UserDetailsVo userDetailsVo = new UserDetailsVo(s, sysUserEntity.getPassword(), AuthorityUtils.commaSeparatedStringToAuthorityList(perms.toString()));
+        UserDetailsVo userDetailsVo = new UserDetailsVo(s, sysUserEntity.getPassword(),
+                // toString方法 去掉中括号
+                AuthorityUtils.commaSeparatedStringToAuthorityList(StringUtils.strip(perms.toString(),"[]")));
         BeanUtils.copyProperties(sysUserEntity, userDetailsVo);
         userDetailsVo.setRoleIds(roleIdSet);
         return userDetailsVo;

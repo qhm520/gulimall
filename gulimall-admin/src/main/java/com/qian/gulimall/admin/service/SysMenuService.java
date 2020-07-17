@@ -1,12 +1,13 @@
 package com.qian.gulimall.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qian.gulimall.admin.api.criteria.SysMenuCriteria;
+import com.qian.gulimall.admin.entity.SysMenuEntity;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
 import com.qian.gulimall.common.utils.PageUtils;
-import com.qian.gulimall.admin.entity.SysMenuEntity;
+import com.qian.gulimall.common.utils.Pageable;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 菜单管理
@@ -17,7 +18,7 @@ import java.util.Map;
  */
 public interface SysMenuService extends IService<SysMenuEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Pageable pageable, SysMenuCriteria sysMenuCriteria);
 
     List<SysMenuEntity> getUserMenuList(UserDetailsVo userDetailsVo);
 

@@ -2,7 +2,7 @@
   <div class="mod-menu">
     <el-form :inline="true" :model="dataForm">
       <el-form-item>
-        <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()"> <icon-svg name="add"/>新增</el-button>
       </el-form-item>
     </el-form>
 
@@ -69,11 +69,11 @@
         fixed="right"
         header-align="center"
         align="center"
-        width="150"
+        width="180"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:menu:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.menuId)">修改</el-button>
-          <el-button v-if="isAuth('sys:menu:delete')" type="text" size="small" @click="deleteHandle(scope.row.menuId)">删除</el-button>
+          <el-button v-if="isAuth('sys:menu:update')" type="warning" size="small" @click="addOrUpdateHandle(scope.row.menuId)"> <icon-svg name="edit"/>修改</el-button>
+          <el-button v-if="isAuth('sys:menu:delete')" type="danger" size="small" @click="deleteHandle(scope.row.menuId)"><icon-svg name="delete"/>删除</el-button>
         </template>
       </el-table-column>
     </el-table>

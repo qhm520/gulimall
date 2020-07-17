@@ -1,8 +1,10 @@
 package com.qian.gulimall.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qian.gulimall.admin.api.criteria.SysLogCriteria;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.admin.entity.SysLogEntity;
+import com.qian.gulimall.common.utils.Pageable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -16,7 +18,7 @@ import java.util.Map;
  */
 public interface SysLogService extends IService<SysLogEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Pageable pageable, SysLogCriteria sysLogCriteria);
 
     /**
      * 保存登录日志

@@ -3,31 +3,34 @@ package com.qian.gulimall.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qian.gulimall.admin.api.criteria.SysLogCriteria;
+import com.qian.gulimall.admin.api.result.SysLogResult;
 import com.qian.gulimall.admin.dao.SysLogDao;
 import com.qian.gulimall.admin.entity.SysLogEntity;
 import com.qian.gulimall.admin.service.SysLogService;
 import com.qian.gulimall.common.entity.vo.LoginInfoVo;
 import com.qian.gulimall.common.security.SecurityConstants;
+import com.qian.gulimall.common.utils.BeanKit;
 import com.qian.gulimall.common.utils.IPUtils;
 import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.Query;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.List;
 
 
 @Service("sysLogService")
 public class SysLogServiceImpl extends ServiceImpl<SysLogDao, SysLogEntity> implements SysLogService {
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils queryPage(Pageable pageable, SysLogCriteria sysLogCriteria) {
         IPage<SysLogEntity> page = this.page(
-                new Query<SysLogEntity>().getPage(params),
+                new Query<SysLogEntity>().getPage(pageable),
                 new QueryWrapper<SysLogEntity>().orderBy(true, false, "create_date")
         );
-
-        return new PageUtils(page);
+        return new PageUtils(page, BeanKit.convertList(SysLogResult.class, page.getRecords()));
     }
 
     @Override

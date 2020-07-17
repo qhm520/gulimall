@@ -3,6 +3,7 @@ package com.qian.gulimall.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qian.gulimall.admin.api.criteria.SysMenuCriteria;
 import com.qian.gulimall.admin.dao.SysMenuDao;
 import com.qian.gulimall.admin.entity.SysMenuEntity;
 import com.qian.gulimall.admin.entity.SysRoleMenuEntity;
@@ -14,6 +15,7 @@ import com.qian.gulimall.admin.service.SysRoleMenuService;
 import com.qian.gulimall.admin.service.SysUserRoleService;
 import com.qian.gulimall.common.utils.Constant;
 import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,9 +86,9 @@ public class SysMenuServiceImpl extends ServiceImpl <SysMenuDao, SysMenuEntity> 
 
 
     @Override
-    public PageUtils queryPage(Map <String, Object> params) {
+    public PageUtils queryPage(Pageable pageable, SysMenuCriteria sysMenuCriteria) {
         IPage <SysMenuEntity> page = this.page(
-                new Query <SysMenuEntity>().getPage(params),
+                new Query <SysMenuEntity>().getPage(pageable),
                 new QueryWrapper <SysMenuEntity>()
         );
 

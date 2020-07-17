@@ -1,14 +1,18 @@
 package com.qian.gulimall.admin.controller;
 
+import com.qian.gulimall.admin.api.criteria.SysRoleCriteria;
 import com.qian.gulimall.admin.entity.SysRoleEntity;
+import com.qian.gulimall.admin.service.SysRoleMenuService;
 import com.qian.gulimall.admin.service.SysRoleService;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
 import com.qian.gulimall.common.utils.Constant;
 import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,14 +38,15 @@ import java.util.Map;
 public class SysRoleController {
     @Autowired
     private SysRoleService sysRoleService;
-
+    @Autowired
+    private SysRoleMenuService sysRoleMenuService;
     /**
      * 列表
      */
     @RequestMapping("/list")
     //@RequiresPermissions("admin:sysrole:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = sysRoleService.queryPage(params);
+    public R list(Pageable pageable, @ModelAttribute SysRoleCriteria sysRoleCriteria){
+        PageUtils page = sysRoleService.queryPage(pageable, sysRoleCriteria);
 
         return R.ok().put("page", page);
     }
@@ -71,7 +76,9 @@ public class SysRoleController {
     //@RequiresPermissions("admin:sysrole:info")
     public R info(@PathVariable("roleId") Long roleId){
 		SysRoleEntity sysRole = sysRoleService.getById(roleId);
-
+        //查询角色对应的菜单
+        List<Long> menuIdList = sysRoleMenuService.queryMenuIdList(roleId);
+        sysRole.setMenuIdList(menuIdList);
         return R.ok().put("role", sysRole);
     }
 
@@ -80,8 +87,10 @@ public class SysRoleController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("admin:sysrole:save")
-    public R save(@RequestBody SysRoleEntity sysRole){
-		sysRoleService.save(sysRole);
+    public R save(@RequestBody SysRoleEntity sysRole, Authentication authentication) {
+        UserDetailsVo userDetailsVo = (UserDetailsVo) authentication.getPrincipal();
+        sysRole.setCreateUserId(userDetailsVo.getUserId());
+		sysRoleService.saveRole(sysRole);
 
         return R.ok();
     }
@@ -91,8 +100,10 @@ public class SysRoleController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("admin:sysrole:update")
-    public R update(@RequestBody SysRoleEntity sysRole){
-		sysRoleService.updateById(sysRole);
+    public R update(@RequestBody SysRoleEntity sysRole, Authentication authentication) {
+        UserDetailsVo userDetailsVo = (UserDetailsVo) authentication.getPrincipal();
+        sysRole.setCreateUserId(userDetailsVo.getUserId());
+		sysRoleService.update(sysRole);
 
         return R.ok();
     }

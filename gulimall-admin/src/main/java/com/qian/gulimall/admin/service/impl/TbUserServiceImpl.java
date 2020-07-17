@@ -18,12 +18,13 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserDao, TbUserEntity> impl
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<TbUserEntity> page = this.page(
-                new Query <TbUserEntity>().getPage(params),
-                new QueryWrapper<TbUserEntity>()
-        );
-
-        return new PageUtils(page);
+//        IPage<TbUserEntity> page = this.page(
+//                new Query <TbUserEntity>().getPage(params),
+//                new QueryWrapper<TbUserEntity>()
+//        );
+//
+//        return new PageUtils(page);
+        return null;
     }
 
 }
