@@ -28,23 +28,31 @@
             </el-badge>
           </template>
         </el-menu-item>
-        <el-menu-item index="1" @click="$router.push({ name: 'theme' })">
+        <!--<el-menu-item index="1" @click="$router.push({ name: 'theme' })">
           <template slot="title">
             <el-badge value="new">
               <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
             </el-badge>
           </template>
+        </el-menu-item>-->
+        <el-menu-item index="2" @click="updatePasswordHandle">
+          <template slot="title">
+            <el-badge value="密码">
+              <icon-svg name="editpwd" class="el-icon-setting"></icon-svg>
+            </el-badge>
+          </template>
         </el-menu-item>
-        <el-menu-item class="site-navbar__avatar" index="3">
-          <el-dropdown :show-timeout="0" placement="bottom">
+        <el-menu-item index="3" @click="logoutHandle">
+          <template slot="title">
+            <el-badge value="退出">
+              <icon-svg name="logout" class="el-icon-setting"></icon-svg>
+            </el-badge>
+          </template>
+        </el-menu-item>
+        <el-menu-item class="site-navbar__avatar" index="4">
             <span class="el-dropdown-link">
-              <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}
+              <img src="../../../static/img/me.png" :alt="userName">{{ userName }}
             </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
-              <el-dropdown-item @click.native="logoutHandle()">退出</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
         </el-menu-item>
       </el-menu>
     </div>

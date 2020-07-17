@@ -24,11 +24,11 @@ public class Query<T> {
         long curPage = 1;
         long limit = 10;
 
-        if (pageable.getPage() != null) {
-            curPage = pageable.getPage();
+        if (pageable.getPageNumber() != null) {
+            curPage = pageable.getPageNumber();
         }
-        if (pageable.getLimit() != null) {
-            limit = pageable.getLimit();
+        if (pageable.getPageSize() != null) {
+            limit = pageable.getPageSize();
         }
 
         //分页对象

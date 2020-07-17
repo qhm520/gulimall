@@ -62,6 +62,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
                         .eq(null != sysUserCriteria.getStatus(), "status", sysUserCriteria.getStatus())
                         // create_time
                         .between((sysUserCriteria.getCreateTimeStart() != null && sysUserCriteria.getCreateTimeEnd() != null), "create_time", sysUserCriteria.getCreateTimeStart(), sysUserCriteria.getCreateTimeEnd())
+                        // create_time
+                        .orderBy(true, false, "create_time")
         );
         // 封装返回数据到result对象中
         return new PageUtils(page, BeanKit.convertList(SysUserResult.class, page.getRecords()));

@@ -1,7 +1,7 @@
 <template>
   <div slot="title" class="title">
-    <icon-svg name="add64" v-if="isAdd"/>
-    <icon-svg name="update64" v-else/>
+    <icon-svg name="add" v-if="isAdd"/>
+    <icon-svg name="edit" v-else/>
      &nbsp;&nbsp; {{ title }}
     <div class="button-right">
       <span class="title-close"></span>
@@ -11,7 +11,7 @@
 
 <script>
   export default {
-    name: "DialogTitle",
+    name: 'DialogTitle',
     props: {
       isAdd: Boolean,
       title: String

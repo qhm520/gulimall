@@ -1,18 +1,45 @@
 <template>
   <div class="mod-log">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="用户名／用户操作" clearable></el-input>
+    <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query">
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="queryCriteria.username" placeholder="用户名" clearable></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+      <el-form-item label="用户操作" prop="operation">
+        <el-input v-model="queryCriteria.operation" placeholder="用户操作" clearable></el-input>
       </el-form-item>
+      <el-form-item label="IP地址" prop="ip">
+        <el-input v-model="queryCriteria.ip" placeholder="IP地址" clearable></el-input>
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createDate">
+        <el-date-picker
+          v-model="queryCriteria.createDate"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+      </el-form-item>
+      <!--查询 和 重置 -->
+      <search-reset :search="query" :reset="reset"></search-reset>
     </el-form>
-    <el-table
-      :data="dataList"
-      border
-      v-loading="dataListLoading"
-      style="width: 100%">
+    <operation>
+        <el-button  type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0"> <icon-svg name="delete"/>&nbsp;批量删除</el-button>
+    </operation>
+    <gulimall-table>
+      <el-table-column
+        type="selection"
+        header-align="center"
+        align="center"
+        width="50">
+      </el-table-column>
+      <el-table-column
+        label="序号"
+        align="center"
+        width="70px">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="id"
         header-align="center"
@@ -68,26 +95,43 @@
         width="180"
         label="创建时间">
       </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
-      :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageSize"
-      :total="totalPage"
-      background
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      <el-table-column
+        fixed="right"
+        header-align="center"
+        align="center"
+        width="120"
+        label="操作">
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.roleId)"><icon-svg name="delete"/>&nbsp;删除</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+    </gulimall-table>
   </div>
 </template>
 
 <script>
+  import Operation from '../../components/Operation/Operation'
+  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallTable from '../../components/GulimallTable/GulimallTable'
+  import {mapGetters} from 'vuex'
+  import {dateFormat} from '../../filters'
+
   export default {
+    name: 'log',
+    components: {
+      Operation,
+      SearchReset,
+      GulimallTable
+    },
     data () {
       return {
-        dataForm: {
-          key: ''
+        queryCriteria: {
+          username: '',
+          operation: '',
+          ip: '',
+          createDate: ['', '']
         },
         dataList: [],
         pageIndex: 1,
@@ -98,41 +142,67 @@
       }
     },
     created () {
-      this.getDataList()
+      this.query('init')
+    },
+    computed: {
+      ...mapGetters({tableSelectData: 'tableSelectData'})
     },
     methods: {
-      // 获取数据列表
-      getDataList () {
-        this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/log/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'key': this.dataForm.key
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
+      /**
+       * 重置查询条件
+       */
+      reset() {
+        this.$refs.queryCriteria.resetFields()
+      },
+      /**
+       * 查询列表数据
+       * @param type
+       */
+      query(type) {
+        const {username, operation, ip, createDate} = this.queryCriteria
+        let start = dateFormat(createDate[0])
+        let end = dateFormat(createDate[1])
+        this.$store.dispatch('query', {
+          url: '/sys/log/list',
+          type: type,
+          formData: {
+            'username': username,
+            'operation': operation,
+            'ip': ip,
+            'createDateStart': start,
+            'createDateEnd': end
           }
-          this.dataListLoading = false
+        });
+      },
+      // 删除
+      deleteHandle (id) {
+        let ids = id ? [id] : this.tableSelectData.map(item => {
+          return item.id
         })
-      },
-      // 每页数
-      sizeChangeHandle (val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      },
-      // 当前页
-      currentChangeHandle (val) {
-        this.pageIndex = val
-        this.getDataList()
+        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/sys/log/delete'),
+            method: 'post',
+            data: this.$http.adornData(ids, false)
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.query('init')
+                }
+              })
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+        }).catch(() => {})
       }
     }
   }

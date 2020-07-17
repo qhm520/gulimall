@@ -1,8 +1,8 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
+    <dialog-title :is-add="!dataForm.id" :title="!dataForm.id ? '新增菜单' : '修改菜单'"></dialog-title>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <el-form-item label="类型" prop="type">
         <el-radio-group v-model="dataForm.type">
@@ -71,17 +71,19 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false"><icon-svg name="cancel"/>&nbsp;取消</el-button>
+      <el-button type="primary" @click="dataFormSubmit()"><icon-svg name="confirm"/>&nbsp;确定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
   import { treeDataTranslate } from '@/utils'
+  import DialogTitle from "../../components/Operation/DialogTitle"
   import Icon from '@/icons'
   export default {
     name: 'MenuDialog',
+    components: {DialogTitle},
     data () {
       var validateUrl = (rule, value, callback) => {
         if (this.dataForm.type === 1 && !/\S/.test(value)) {

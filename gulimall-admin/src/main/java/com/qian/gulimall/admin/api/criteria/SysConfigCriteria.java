@@ -16,4 +16,13 @@ import java.io.Serializable;
 public class SysConfigCriteria implements Serializable {
 
     private static final long serialVersionUID = -3577992098559048001L;
+
+    /**
+     * key
+     */
+    private String paramKey;
+    /**
+     * 状态   0：隐藏   1：显示
+     */
+    private Integer status;
 }

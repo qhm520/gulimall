@@ -1,26 +1,47 @@
 <template>
   <div class="mod-config">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input v-model="dataForm.paramKey" placeholder="参数名" clearable></el-input>
+    <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
+      <el-form-item label="参数名" prop="paramKey">
+        <el-input v-model="queryCriteria.paramKey" placeholder="参数名" clearable></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button type="success" @click="getDataList()">  <icon-svg name="search"/>查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">  <icon-svg name="add"/>新增</el-button>
-        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">  <icon-svg name="delete"/>批量删除</el-button>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryCriteria.status" placeholder="请选择">
+          <el-option
+            v-for="item in statusList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
+      <!--查询 和 重置 -->
+      <search-reset :search="query" :reset="reset"></search-reset>
     </el-form>
-    <el-table
-      :data="dataList"
-      border
-      v-loading="dataListLoading"
-      @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    <operation>
+      <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
+        <icon-svg name="add"/>
+        &nbsp;新增参数
+      </el-button>
+      <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
+                 :disabled="tableSelectData.length <= 0">
+        <icon-svg name="delete"/>
+        &nbsp;批量删除
+      </el-button>
+    </operation>
+    <gulimall-table>
       <el-table-column
         type="selection"
         header-align="center"
         align="center"
         width="50">
+      </el-table-column>
+      <el-table-column
+        label="序号"
+        align="center"
+        width="70px">
+        <template slot-scope="scope">
+          {{scope.$index+1}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="id"
@@ -48,103 +69,96 @@
         label="备注">
       </el-table-column>
       <el-table-column
+        prop="status"
+        header-align="center"
+        align="center"
+        label="状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
+          <el-tag v-else size="small">正常</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="180"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="warning" size="small" @click="addOrUpdateHandle(scope.row.id)"><icon-svg name="edit"/>修改</el-button>
-          <el-button type="danger" size="small" @click="deleteHandle(scope.row.id)"><icon-svg name="delete"/>删除</el-button>
+          <el-button-group>
+            <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.id)"><icon-svg name="edit"/>修改</el-button>
+            <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.id)"><icon-svg name="delete"/>删除</el-button>
+          </el-button-group>
         </template>
       </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
-      :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageSize"
-      :total="totalPage"
-      background
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+    </gulimall-table>
     <!-- 弹窗, 新增 / 修改 -->
-    <config-dialog v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></config-dialog>
+    <config-dialog v-if="openDialog" ref="configDialog" @refreshDataList="query"></config-dialog>
   </div>
 </template>
 
 <script>
-  import ConfigDialog from "./ConfigDialog";
+  import ConfigDialog from './ConfigDialog'
+  import Operation from '../../components/Operation/Operation'
+  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallTable from '../../components/GulimallTable/GulimallTable'
+  import {mapGetters} from 'vuex'
+  import {dateFormat} from "../../filters";
   export default {
     data () {
       return {
-        dataForm: {
-          paramKey: ''
+        queryCriteria: {
+          paramKey: '',
+          status: ''
         },
-        dataList: [],
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0,
-        dataListLoading: false,
-        dataListSelections: [],
-        addOrUpdateVisible: false
+        statusList: [{value: 0, label: '禁用'}, {value: 1, label: '正常'}],  // TODO 以后从字典中获取
+        openDialog: false
       }
     },
     components: {
-      ConfigDialog
+      ConfigDialog,
+      Operation,
+      SearchReset,
+      GulimallTable
     },
     activated () {
-      this.getDataList()
+      this.query('init')
+    },
+    computed: {
+      ...mapGetters({tableSelectData: 'tableSelectData'})
     },
     methods: {
-      // 获取数据列表
-      getDataList () {
-        this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/config/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'paramKey': this.dataForm.paramKey
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
+      /**
+       * 重置查询条件
+       */
+      reset() {
+        this.$refs.queryCriteria.resetFields()
+      },
+      /**
+       * 查询列表数据
+       * @param type
+       */
+      query(type) {
+        this.$store.dispatch('query', {
+          url: '/sys/config/list',
+          type: type,
+          formData: {
+            'paramKey': this.queryCriteria.paramKey,
+            'status': this.queryCriteria.status
           }
-          this.dataListLoading = false
-        })
+        });
       },
-      // 每页数
-      sizeChangeHandle (val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      },
-      // 当前页
-      currentChangeHandle (val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-      // 多选
-      selectionChangeHandle (val) {
-        this.dataListSelections = val
-      },
+
       // 新增 / 修改
       addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
+        this.openDialog = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.configDialog.init(id)
         })
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        var ids = id ? [id] : this.tableSelectData.map(item => {
           return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
@@ -163,7 +177,7 @@
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.getDataList()
+                  this.query('init')
                 }
               })
             } else {

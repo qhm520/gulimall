@@ -3,11 +3,11 @@
     <el-button-group>
       <el-button class="blue-background" @click="search">
         <icon-svg name="search"/>
-        查询
+        &nbsp;查询
       </el-button>
       <el-button class="blue-background" @click="reset">
         <icon-svg name="clear"/>
-        重置
+        &nbsp;重置
       </el-button>
     </el-button-group>
   </el-form-item>
@@ -15,10 +15,10 @@
 
 <script>
   export default {
-    name: "SearchReset",
+    name: 'SearchReset',
     props: {
       search: Function,
-      reset: Function,
+      reset: Function
     },
     methods: {}
   }

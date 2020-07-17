@@ -1,39 +1,26 @@
 <template>
   <div class="mod-role">
-    <el-form rel="queryCriteria" :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+    <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
       <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <el-input v-model="queryCriteria.roleName" placeholder="角色名称" clearable></el-input>
       </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
-          v-model="dataForm.createTime"
+          v-model="queryCriteria.createTime"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item style="float: right">
-        <el-button-group>
-          <el-button type="success" @click="getDataList()"><icon-svg name="search"/>查询</el-button>
-          <el-button type="warning" @click="clear()">
-            <icon-svg name="clear"/>
-            清空
-          </el-button>
-        </el-button-group>
-
-      </el-form-item>
+      <!--查询 和 重置 -->
+      <search-reset :search="query" :reset="reset"></search-reset>
     </el-form>
-    <el-button-group>
-      <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>新增</el-button>
-      <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0"> <icon-svg name="delete"/>批量删除</el-button>
-    </el-button-group>
-    <el-table
-      :data="dataList"
-      border
-      v-loading="dataListLoading"
-      @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    <operation>
+        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>&nbsp;新增角色</el-button>
+        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0"> <icon-svg name="delete"/>&nbsp;批量删除</el-button>
+    </operation>
+    <gulimall-table>
       <el-table-column
         type="selection"
         header-align="center"
@@ -82,105 +69,83 @@
         label="操作">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button v-if="isAuth('sys:role:update')" type="warning" size="small" @click="addOrUpdateHandle(scope.row.roleId)"><icon-svg name="edit"/>修改</el-button>
-            <el-button v-if="isAuth('sys:role:delete')" type="danger" size="small" @click="deleteHandle(scope.row.roleId)"><icon-svg name="delete"/>删除</el-button>
+            <el-button v-if="isAuth('sys:role:update')" type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.roleId)"><icon-svg name="edit"/>&nbsp;修改</el-button>
+            <el-button v-if="isAuth('sys:role:delete')" type="danger" size="small" @click.stop="deleteHandle(scope.row.roleId)"><icon-svg name="delete"/>&nbsp;删除</el-button>
           </el-button-group>
         </template>
       </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
-      :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageSize"
-      :total="totalPage"
-      background
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+    </gulimall-table>
     <!-- 弹窗, 新增 / 修改 -->
-    <role-dialog v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></role-dialog>
+    <role-dialog v-if="openDialog" ref="roleDialog" @refreshDataList="query"></role-dialog>
   </div>
 </template>
 
 <script>
-  import RoleDialog from "./RoleDialog";
+  import RoleDialog from './RoleDialog'
+  import {dateFormat} from '../../filters'
+  import Operation from '../../components/Operation/Operation'
+  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallTable from '../../components/GulimallTable/GulimallTable'
+  import {mapGetters} from 'vuex'
   export default {
     data () {
       return {
-        dataForm: {
+        queryCriteria: {
           roleName: '', // 角色名称
           createTime: ['', '']  // 创建时间
         },
-        dataList: [],
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0,
-        dataListLoading: false,
-        dataListSelections: [],
-        addOrUpdateVisible: false
+        openDialog: false // 打开弹框
       }
     },
     components: {
-      RoleDialog
+      RoleDialog,
+      Operation,
+      SearchReset,
+      GulimallTable
     },
-    activated () {
-      this.getDataList()
+    activated() {
+      this.query('init')
+    },
+    computed: {
+      ...mapGetters({tableSelectData: 'tableSelectData'})
     },
     methods: {
       /**
        * 重置查询条件
        */
-      clear () {
-        this.$refs.queryCriteria.resetFields();
-      },
-      // 获取数据列表
-      getDataList () {
-        this.dataListLoading = true
-        this.$http({
-          url: this.$http.adornUrl('/sys/role/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'roleName': this.dataForm.roleName
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
-          }
-          this.dataListLoading = false
+      reset() {
+        this.$nextTick(()=>{
+          this.$refs.queryCriteria.resetFields()
         })
       },
-      // 每页数
-      sizeChangeHandle (val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      },
-      // 当前页
-      currentChangeHandle (val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-      // 多选
-      selectionChangeHandle (val) {
-        this.dataListSelections = val
+      /**
+       * 查询列表数据
+       * @param type
+       */
+      query (type) {
+        const {roleName, createTime} = this.queryCriteria
+        let start = dateFormat(createTime[0])
+        let end = dateFormat(createTime[1])
+        this.$store.dispatch('query', {
+          url: '/sys/role/list',
+          type: type,
+          formData: {
+            'roleName': roleName,
+            'createTimeStart': start,
+            'createTimeEnd': end
+          }
+        });
       },
       // 新增 / 修改
       addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
+        this.openDialog = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.roleDialog.init(id)
         })
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        var ids = id ? [id] : this.tableSelectData.map(item => {
           return item.roleId
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
@@ -199,7 +164,7 @@
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.getDataList()
+                  this.query()
                 }
               })
             } else {

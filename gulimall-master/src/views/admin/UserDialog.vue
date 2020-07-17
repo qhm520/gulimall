@@ -43,12 +43,12 @@
 </template>
 
 <script>
-  import {isEmail, isMobile} from '../../utils/validate';
-  import DialogTitle from "../../components/Operation/DialogTitle";
+  import {isEmail, isMobile} from '../../utils/validate'
+  import DialogTitle from '../../components/Operation/DialogTitle'
 
   export default {
     name: 'UserDialog',
-    components: {DialogTitle},
+    components: { DialogTitle },
     data() {
       let validatePassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
@@ -134,6 +134,7 @@
       },
       init(id) {
         this.dataForm.id = id || 0
+        this.checkAll = false
         this.$http({
           url: this.$http.adornUrl('/sys/role/select'),
           method: 'get',

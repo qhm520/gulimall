@@ -1,18 +1,25 @@
 <template>
   <el-row style="background-color: #2D64B3">
-    <el-button-group style="float: right; margin-right: -175px;">
-      <slot name="add"></slot>
-      <slot name="batchDelete"></slot>
+    <el-button class="menuName"><icon-svg :name="$route.meta.icon"/>&nbsp;&nbsp;{{$route.name}}</el-button>
+    <el-button-group style="float: right; margin-top: 2px; margin-right: -175px;height: 40px">
+      <slot></slot>
     </el-button-group>
   </el-row>
 </template>
 
 <script>
   export default {
-    name: "Operation"
+    name: 'Operation',
   }
 </script>
 
 <style scoped>
-
+  .menuName {
+    margin-left: 1px;
+    margin-top: 1px;
+    font-size: 16px;
+    background-color: #2D64B3;
+    color: white;
+    border: 0px solid #2D64B3;
+  }
 </style>

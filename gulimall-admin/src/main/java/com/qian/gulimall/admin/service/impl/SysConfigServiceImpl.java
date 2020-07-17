@@ -10,6 +10,7 @@ import com.qian.gulimall.admin.service.SysConfigService;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.Query;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 
@@ -21,6 +22,10 @@ public class SysConfigServiceImpl extends ServiceImpl<SysConfigDao, SysConfigEnt
         IPage<SysConfigEntity> page = this.page(
                 new Query<SysConfigEntity>().getPage(pageable),
                 new QueryWrapper<SysConfigEntity>()
+                    // username
+                    .like(StringUtils.isNotBlank(sysConfigCriteria.getParamKey()),"param_key", sysConfigCriteria.getParamKey())
+                    // status
+                    .eq(sysConfigCriteria.getStatus() != null, "status", sysConfigCriteria.getStatus())
         );
 
         return new PageUtils(page);

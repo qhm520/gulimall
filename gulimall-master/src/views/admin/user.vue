@@ -1,6 +1,6 @@
 <template>
   <div class="mod-user">
-    <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="getDataList()">
+    <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query">
       <el-form-item label="用户名" prop="username">
         <el-input v-model="queryCriteria.username" placeholder="请输入用户名" clearable></el-input>
       </el-form-item>
@@ -16,7 +16,6 @@
             :value="item.value">
           </el-option>
         </el-select>
-
       </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker
@@ -27,29 +26,23 @@
           end-placeholder="结束日期">
         </el-date-picker>
       </el-form-item>
-       <!--查询 和 重置 -->
-      <search-reset :search="getDataList" :reset="reset"></search-reset>
+      <!--查询 和 重置 -->
+      <search-reset :search="query" :reset="reset"></search-reset>
     </el-form>
     <operation>
-      <el-button slot="add" v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
-        <icon-svg name="add"/>
-        新增用户
-      </el-button>
-      <el-button slot="batchDelete" v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
-                 :disabled="dataListSelections.length <= 0">
-        <icon-svg name="delete"/>
-        批量删除
-      </el-button>
+      <div>
+        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
+          <icon-svg name="add"/>
+          &nbsp;新增用户
+        </el-button>
+        <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
+                   :disabled="tableSelectData.length <= 0">
+          <icon-svg name="delete"/>
+          &nbsp;批量删除
+        </el-button>
+      </div>
     </operation>
-    <el-table
-      ref="userTable"
-      :data="dataList"
-      @row-click="clickRow"
-      highlight-current-row
-      border
-      v-loading="dataListLoading"
-      @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    <gulimall-table>
       <el-table-column
         type="selection"
         header-align="center"
@@ -127,31 +120,23 @@
           </el-button-group>
         </template>
       </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
-      :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageSize"
-      :total="totalPage"
-      background
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+    </gulimall-table>
     <!-- 弹窗, 新增 / 修改 -->
-    <user-dialog v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></user-dialog>
+    <user-dialog ref="userDialog" v-if="openDialog" @refreshDataList="query"></user-dialog>
   </div>
 </template>
 
 <script>
-  import UserDialog from "./UserDialog";
-  import { dateFormat } from '../../filters';
-  import Operation from "../../components/Operation/Operation";
-  import SearchReset from "../../components/Operation/SearchReset";
+  import UserDialog from './UserDialog'
+  import {dateFormat} from '../../filters'
+  import Operation from '../../components/Operation/Operation'
+  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallTable from '../../components/GulimallTable/GulimallTable'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'user',
-    data () {
+    data() {
       return {
         queryCriteria: {
           username: '',
@@ -160,84 +145,58 @@
           createTime: ['', '']
         },
         statusList: [{value: 0, label: '禁用'}, {value: 1, label: '正常'}],  // TODO 以后从字典中获取
-        dataList: [],
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0,
-        dataListLoading: false,
-        dataListSelections: [],
-        addOrUpdateVisible: false
+        openDialog: false
       }
     },
     components: {
       UserDialog,
       Operation,
-      SearchReset
+      SearchReset,
+      GulimallTable
     },
-    activated () {
-      this.getDataList()
+    activated() {
+      this.query('init')
+    },
+    computed: {
+      ...mapGetters({tableSelectData: 'tableSelectData'})
     },
     methods: {
       /**
        * 重置查询条件
        */
-      reset () {
-        this.$refs.queryCriteria.resetFields();
+      reset() {
+        this.$refs.queryCriteria.resetFields()
       },
-      // 获取数据列表
-      getDataList () {
-        this.dataListLoading = true
-        const { username, mobile, status, createTime } = this.queryCriteria
+      /**
+       * 查询列表数据
+       * @param type
+       */
+      query(type) {
+        const {username, mobile, status, createTime} = this.queryCriteria
         let start = dateFormat(createTime[0])
         let end = dateFormat(createTime[1])
-        this.$http({
-          url: this.$http.adornUrl('/sys/user/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
+        this.$store.dispatch('query', {
+          url: '/sys/user/list',
+          type: type,
+          formData: {
             'username': username,
             'mobile': mobile,
             'status': status,
             'createTimeStart': start,
             'createTimeEnd': end
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
-          } else {
-            this.dataList = []
-            this.totalPage = 0
           }
-          this.dataListLoading = false
-        })
-      },
-      // 每页数
-      sizeChangeHandle(val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      },
-      // 当前页
-      currentChangeHandle(val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-      // 多选
-      selectionChangeHandle(val) {
-        this.dataListSelections = val
+        });
       },
       // 新增 / 修改
       addOrUpdateHandle(id) {
-        this.addOrUpdateVisible = true
+        this.openDialog = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.userDialog.init(id)
         })
       },
       // 删除
       deleteHandle(id) {
-        var userIds = id ? [id] : this.dataListSelections.map(item => {
+        var userIds = id ? [id] : this.tableSelectData.map(item => {
           return item.userId
         })
         this.$confirm(`确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
@@ -256,7 +215,7 @@
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.getDataList()
+                  this.query()
                 }
               })
             } else {
@@ -265,14 +224,6 @@
           })
         }).catch(() => {
         })
-      },
-
-      /**
-       * 点击行选择
-       * @param row
-       */
-      clickRow(row) {
-        this.$refs.userTable.toggleRowSelection(row)
       }
     }
   }

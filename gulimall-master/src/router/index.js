@@ -124,12 +124,13 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
       var route = {
         path: menuList[i].url.replace('/', '-'),
         component: null,
-        name: menuList[i].url.replace('/', '-'),
+        name: menuList[i].name,
         meta: {
           menuId: menuList[i].menuId,
           title: menuList[i].name,
           isDynamic: true,
           isTab: true,
+          icon: menuList[i].icon,
           iframeUrl: ''
         }
       }

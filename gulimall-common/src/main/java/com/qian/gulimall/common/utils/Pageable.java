@@ -17,9 +17,9 @@ public class Pageable implements Serializable {
 
     private static final long serialVersionUID = -7428917360046148374L;
 
-    private Long page;
+    private Long pageNumber;
 
-    private Long limit;
+    private Long pageSize;
 
     private String sidx;
 

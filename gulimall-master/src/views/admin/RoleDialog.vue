@@ -1,8 +1,8 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible">
+    <dialog-title :is-add="!dataForm.id" :title="!dataForm.id ? '新增用户' : '修改角色'"></dialog-title>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <el-form-item label="角色名称" prop="roleName">
         <el-input v-model="dataForm.roleName" placeholder="角色名称"></el-input>
@@ -30,8 +30,10 @@
 
 <script>
   import { treeDataTranslate } from '@/utils'
+  import DialogTitle from '../../components/Operation/DialogTitle'
   export default {
     name: 'RoleDialog',
+    components: { DialogTitle },
     data () {
       return {
         visible: false,

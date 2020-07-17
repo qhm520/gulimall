@@ -7,6 +7,7 @@ import com.qian.gulimall.admin.api.criteria.SysLogCriteria;
 import com.qian.gulimall.admin.api.result.SysLogResult;
 import com.qian.gulimall.admin.dao.SysLogDao;
 import com.qian.gulimall.admin.entity.SysLogEntity;
+import com.qian.gulimall.admin.entity.SysUserEntity;
 import com.qian.gulimall.admin.service.SysLogService;
 import com.qian.gulimall.common.entity.vo.LoginInfoVo;
 import com.qian.gulimall.common.security.SecurityConstants;
@@ -15,10 +16,10 @@ import com.qian.gulimall.common.utils.IPUtils;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.Query;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 
 @Service("sysLogService")
@@ -28,7 +29,18 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogDao, SysLogEntity> impl
     public PageUtils queryPage(Pageable pageable, SysLogCriteria sysLogCriteria) {
         IPage<SysLogEntity> page = this.page(
                 new Query<SysLogEntity>().getPage(pageable),
-                new QueryWrapper<SysLogEntity>().orderBy(true, false, "create_date")
+                // 查询条件
+                new QueryWrapper<SysLogEntity>()
+                // username
+                .like(StringUtils.isNotBlank(sysLogCriteria.getUsername()),"username", sysLogCriteria.getUsername())
+                // operation
+                .like(StringUtils.isNotBlank(sysLogCriteria.getOperation()),"operation", sysLogCriteria.getOperation())
+                // ip
+                .like(StringUtils.isNotBlank(sysLogCriteria.getIp()), "ip", sysLogCriteria.getIp())
+                // create_date
+                .between((sysLogCriteria.getCreateDateStart() != null && sysLogCriteria.getCreateDateEnd() != null), "create_date", sysLogCriteria.getCreateDateStart(), sysLogCriteria.getCreateDateEnd())
+                // create_time
+                .orderBy(true, false, "create_date")
         );
         return new PageUtils(page, BeanKit.convertList(SysLogResult.class, page.getRecords()));
     }

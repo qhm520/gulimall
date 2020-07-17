@@ -1,8 +1,8 @@
 <template>
   <el-dialog
-    title="修改密码"
     :visible.sync="visible"
     :append-to-body="true">
+    <dialog-title :is-add="false" title="修改密码"></dialog-title>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <el-form-item label="账号">
         <span>{{ userName }}</span>
@@ -18,16 +18,18 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false"><icon-svg name="cancel"/>&nbsp;取消</el-button>
+      <el-button type="primary" @click="dataFormSubmit()"><icon-svg name="confirm"/>&nbsp;确定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
   import { clearLoginInfo } from '@/utils'
+  import DialogTitle from '../../components/Operation/DialogTitle'
   export default {
     name: 'UpdatePasswordDialog',
+    components: {DialogTitle},
     data () {
       var validateConfirmPassword = (rule, value, callback) => {
         if (this.dataForm.newPassword !== value) {

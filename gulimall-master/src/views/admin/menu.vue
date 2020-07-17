@@ -1,11 +1,10 @@
 <template>
   <div class="mod-menu">
-    <el-form :inline="true" :model="dataForm">
-      <el-form-item>
-        <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()"> <icon-svg name="add"/>新增</el-button>
-      </el-form-item>
-    </el-form>
-
+    <operation>
+      <div style="margin-right: 180px">
+        <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>&nbsp;新增菜单</el-button>
+      </div>
+    </operation>
     <el-table
       :data="dataList"
       row-key="menuId"
@@ -72,8 +71,10 @@
         width="180"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:menu:update')" type="warning" size="small" @click="addOrUpdateHandle(scope.row.menuId)"> <icon-svg name="edit"/>修改</el-button>
-          <el-button v-if="isAuth('sys:menu:delete')" type="danger" size="small" @click="deleteHandle(scope.row.menuId)"><icon-svg name="delete"/>删除</el-button>
+          <el-button-group>
+            <el-button v-if="isAuth('sys:menu:update')" type="warning" size="small" @click="addOrUpdateHandle(scope.row.menuId)"> <icon-svg name="edit"/>&nbsp;修改</el-button>
+            <el-button v-if="isAuth('sys:menu:delete')" type="danger" size="small" @click="deleteHandle(scope.row.menuId)"><icon-svg name="delete"/>&nbsp;删除</el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -84,7 +85,8 @@
 
 <script>
   import { treeDataTranslate } from '@/utils'
-  import MenuDialog from "./MenuDialog";
+  import MenuDialog from './MenuDialog'
+  import Operation from "../../components/Operation/Operation";
   export default {
     data () {
       return {
@@ -95,7 +97,8 @@
       }
     },
     components: {
-      MenuDialog
+      MenuDialog,
+      Operation
     },
     activated () {
       this.getDataList()
