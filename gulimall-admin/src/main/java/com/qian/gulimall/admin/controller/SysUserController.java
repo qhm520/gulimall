@@ -4,6 +4,7 @@ import com.qian.gulimall.admin.api.criteria.SysUserCriteria;
 import com.qian.gulimall.admin.entity.SysUserEntity;
 import com.qian.gulimall.admin.service.SysUserRoleService;
 import com.qian.gulimall.admin.service.SysUserService;
+import com.qian.gulimall.common.annotation.SysLog;
 import com.qian.gulimall.common.entity.vo.UserDetailsVo;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
@@ -77,6 +78,7 @@ public class SysUserController {
     /**
      * 保存
      */
+    @SysLog("新增用户")
     @RequestMapping("/save")
     @PreAuthorize("hasPermission('', 'sys:user:save')")
     public R save(@RequestBody SysUserEntity sysUser, Authentication authentication) {
@@ -89,6 +91,7 @@ public class SysUserController {
     /**
      * 修改
      */
+    @SysLog("修改用户")
     @RequestMapping("/update")
     @PreAuthorize("hasPermission('', 'sys:user:update')")
     public R update(@RequestBody SysUserEntity sysUser, Authentication authentication) {

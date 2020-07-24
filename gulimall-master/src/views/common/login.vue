@@ -168,7 +168,6 @@
                 'imageCode': this.loginForm.imageCode
               })
             }).then(({data}) => {
-              console.log(data)
               if (data && data.code === 0) {
                 sessionStorage.setItem('access_token', data.token.access_token)
                 sessionStorage.setItem('refresh_token', data.token.refresh_token)

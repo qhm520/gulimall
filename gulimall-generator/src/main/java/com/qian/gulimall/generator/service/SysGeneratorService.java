@@ -26,7 +26,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * 代码生成器
  *
- * @author Mark sunlightcs@gmail.com
+ * @author QIAN
  */
 @Service
 public class SysGeneratorService {

@@ -45,7 +45,7 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogDao, SysLogEntity> impl
         return new PageUtils(page, BeanKit.convertList(SysLogResult.class, page.getRecords()));
     }
 
-    @Override
+   /* @Override
     public void saveLoginSysLog(HttpServletRequest request, String operation, String method) {
         try {
             LoginInfoVo loginInfoVo = (LoginInfoVo) request.getAttribute(SecurityConstants.DEFAULT_LOGIN_INFO);
@@ -67,6 +67,6 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogDao, SysLogEntity> impl
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

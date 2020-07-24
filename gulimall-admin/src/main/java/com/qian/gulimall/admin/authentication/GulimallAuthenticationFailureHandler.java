@@ -1,10 +1,8 @@
 package com.qian.gulimall.admin.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qian.gulimall.admin.entity.SysLogEntity;
-import com.qian.gulimall.admin.service.SysLogService;
+import com.qian.gulimall.admin.service.SysLoginLogService;
 import com.qian.gulimall.common.security.SecurityConstants;
-import com.qian.gulimall.common.utils.IPUtils;
 import com.qian.gulimall.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +13,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +33,7 @@ public class GulimallAuthenticationFailureHandler extends SimpleUrlAuthenticatio
     private ObjectMapper objectMapper;
 
     @Autowired
-    private SysLogService sysLogService;
+    private SysLoginLogService sysLoginLogService;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -46,7 +42,7 @@ public class GulimallAuthenticationFailureHandler extends SimpleUrlAuthenticatio
         // 记录登录失败日志
         String method = this.getClass().getName() + "." + Thread.currentThread() .getStackTrace()[1].getMethodName();
         String operation = "登陆失败: " + exception.getMessage();
-        sysLogService.saveLoginSysLog(request, operation, method);
+        sysLoginLogService.saveLoginSysLog(request, operation, method);
         log.info(operation);
         request.removeAttribute(SecurityConstants.DEFAULT_LOGIN_INFO);
         response.setStatus(HttpStatus.OK.value());

@@ -26,6 +26,6 @@ public interface SysLogService extends IService<SysLogEntity> {
      * @param operation
      * @param method
      */
-    void saveLoginSysLog(HttpServletRequest request, String operation, String method);
+//    void saveLoginSysLog(HttpServletRequest request, String operation, String method);
 }
 

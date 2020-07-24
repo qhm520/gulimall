@@ -37,7 +37,7 @@
         </el-menu-item>-->
         <el-menu-item index="2" @click="updatePasswordHandle">
           <template slot="title">
-            <el-badge value="密码">
+            <el-badge value="修改">
               <icon-svg name="editpwd" class="el-icon-setting"></icon-svg>
             </el-badge>
           </template>

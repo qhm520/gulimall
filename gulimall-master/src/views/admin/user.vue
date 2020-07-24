@@ -110,12 +110,12 @@
             <el-button v-if="isAuth('sys:user:update')" type="warning" size="small"
                        @click.stop="addOrUpdateHandle(scope.row.userId)">
               <icon-svg name="edit"/>
-              修改
+              &nbsp;修改
             </el-button>
             <el-button v-if="isAuth('sys:user:delete')" type="danger" size="small"
                        @click.stop="deleteHandle(scope.row.userId)">
               <icon-svg name="delete"/>
-              删除
+              &nbsp;删除
             </el-button>
           </el-button-group>
         </template>
@@ -215,7 +215,7 @@
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.query()
+                  this.query('init')
                 }
               })
             } else {

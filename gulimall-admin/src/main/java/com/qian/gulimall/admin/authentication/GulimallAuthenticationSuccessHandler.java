@@ -2,6 +2,7 @@ package com.qian.gulimall.admin.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qian.gulimall.admin.service.SysLogService;
+import com.qian.gulimall.admin.service.SysLoginLogService;
 import com.qian.gulimall.common.security.SecurityConstants;
 import com.qian.gulimall.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class GulimallAuthenticationSuccessHandler extends SavedRequestAwareAuthe
     private AuthorizationServerTokenServices authorizationServerTokenServices;
 
     @Autowired
-    private SysLogService sysLogService;
+    private SysLoginLogService sysLoginLogService;
 
     /**
      * Authentication是spring security的核心接口，封装了认证信息
@@ -99,7 +100,7 @@ public class GulimallAuthenticationSuccessHandler extends SavedRequestAwareAuthe
         // 记录登录失败日志
         String method = this.getClass().getName() + "." + Thread.currentThread() .getStackTrace()[1].getMethodName();
         String operation = "登陆成功";
-        sysLogService.saveLoginSysLog(request, operation, method);
+        sysLoginLogService.saveLoginSysLog(request, operation, method);
         // 从session删除
         request.removeAttribute(SecurityConstants.DEFAULT_LOGIN_INFO);
         response.setContentType("application/json;charset=UTF-8");

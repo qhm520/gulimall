@@ -16,4 +16,7 @@ import java.io.Serializable;
 public class SysUserDto implements Serializable {
 
     private static final long serialVersionUID = 5689408367721255980L;
+
+
+
 }

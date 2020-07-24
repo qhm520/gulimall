@@ -1,9 +1,7 @@
 <template>
   <div class="mod-menu">
     <operation>
-      <div style="margin-right: 200px">
-        <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>&nbsp;新增菜单</el-button>
-      </div>
+      <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>&nbsp;新增菜单</el-button>
     </operation>
     <el-table
       :data="dataList"
@@ -141,7 +139,7 @@
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.getDataList()
+                  this.query('init')
                 }
               })
             } else {
