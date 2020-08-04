@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gulimall-order</artifactId>
-    <description>咕鲤商城-订单服务</description>
+    <description>谷粒商城-订单服务</description>
 
     <dependencies>
         <dependency>

@@ -1,5 +1,6 @@
 package com.qian.gulimall.admin.util;
 
+import com.qian.gulimall.admin.api.dto.ScheduleJobLogDto;
 import com.qian.gulimall.admin.entity.ScheduleJobEntity;
 import com.qian.gulimall.admin.entity.ScheduleJobLogEntity;
 import com.qian.gulimall.admin.service.ScheduleJobLogService;
@@ -48,11 +49,17 @@ public class ScheduleJob extends QuartzJobBean {
                 .get(ScheduleJobEntity.JOB_PARAM_KEY);
 
         //数据库保存执行记录
+//        ScheduleJobLogEntity scheduleJobLogEntity = ScheduleJobLogEntity.builder()
+//                .beanName(scheduleJob.getBeanName())
+//                .jobId(scheduleJob.getJobId())
+//                .params(scheduleJob.getParams())
+//                .build();
+
         ScheduleJobLogEntity scheduleJobLogEntity = new ScheduleJobLogEntity();
         scheduleJobLogEntity.setJobId(scheduleJob.getJobId());
         scheduleJobLogEntity.setBeanName(scheduleJob.getBeanName());
         scheduleJobLogEntity.setParams(scheduleJob.getParams());
-        scheduleJobLogEntity.setCreateTime(new Date());
+//        scheduleJobLogEntity.setCreateTime(new Date());
 
         //任务开始时间
         long startTime = System.currentTimeMillis();

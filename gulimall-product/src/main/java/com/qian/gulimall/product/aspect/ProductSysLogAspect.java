@@ -77,10 +77,13 @@ public class ProductSysLogAspect {
         //请求的参数
         Object[] args = joinPoint.getArgs();
         try {
-            String params = new Gson().toJson(args);
-            sysLog.setParams(params);
+            // 获取第一个就可以
+            if (args != null && args.length > 0) {
+                String params = new Gson().toJson(args[0]);
+                sysLog.setParams(params);
+            }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         //获取request
@@ -97,6 +100,6 @@ public class ProductSysLogAspect {
         sysLog.setCreateDate(new Date());
         //保存系统日志
         R save = sysLogFeignService.save(sysLog);
-        log.info(save.getCode()+"");
+        log.info(save.getCode() + "");
     }
 }

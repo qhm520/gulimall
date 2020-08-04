@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>gulimall-third-party</artifactId>
-    <description>第三方服务</description>
+    <description>谷粒商城-第三方服务</description>
 
 
     <dependencies>

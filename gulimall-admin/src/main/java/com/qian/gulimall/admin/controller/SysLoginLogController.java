@@ -34,7 +34,7 @@ public class SysLoginLogController {
      * 列表
      */
     @RequestMapping("/list")
-    //@RequiresPermissions("admin:sysloginlog:list")
+    //@RequiresPermissions("sys:login:list")
     public R list(Pageable pageable, @ModelAttribute SysLoginLogCriteria sysLoginLogCriteria){
         PageUtils page = sysLoginLogService.queryPage(pageable, sysLoginLogCriteria);
 
@@ -45,7 +45,7 @@ public class SysLoginLogController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    //@RequiresPermissions("admin:sysloginlog:info")
+    //@RequiresPermissions("sys:login:info")
     public R info(@PathVariable("id") Long id){
         SysLoginLogDto sysLoginLog = sysLoginLogService.getSysLoginLogById(id);
 
@@ -56,7 +56,7 @@ public class SysLoginLogController {
      * 删除
      */
     @RequestMapping("/delete")
-    //@RequiresPermissions("admin:sysloginlog:delete")
+    //@RequiresPermissions("sys:login:delete")
     public R delete(@RequestBody Long[] ids){
 		sysLoginLogService.removeByIds(Arrays.asList(ids));
 

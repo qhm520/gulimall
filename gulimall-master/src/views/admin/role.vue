@@ -164,7 +164,7 @@
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.query()
+                  this.query('init')
                 }
               })
             } else {

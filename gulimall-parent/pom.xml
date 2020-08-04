@@ -19,9 +19,10 @@
         <module>../gulimall-order</module>
         <module>../gulimall-third-party</module>
         <module>../gulimall-ware</module>
+        <module>../gulimall-search</module>
     </modules>
     <packaging>pom</packaging>
-    <description>咕鲤商城</description>
+    <description>谷粒商城</description>
 
 
     <!-- 统一管理jar包版本 -->

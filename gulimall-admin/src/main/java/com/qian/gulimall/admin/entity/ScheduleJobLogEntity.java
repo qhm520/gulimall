@@ -8,10 +8,13 @@
 
 package com.qian.gulimall.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,11 +24,14 @@ import java.util.Date;
  *
  * @author QIAN
  */
+//@Builder
+//@NoArgsConstructor
 @Data
 @TableName("schedule_job_log")
 public class ScheduleJobLogEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
+
+
+	private static final long serialVersionUID = -6754261407518004964L;
 	/**
 	 * 日志id
 	 */
@@ -65,7 +71,8 @@ public class ScheduleJobLogEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+	@TableField(value = "create_time", fill = FieldFill.INSERT)
 	private Date createTime;
+
 	
 }

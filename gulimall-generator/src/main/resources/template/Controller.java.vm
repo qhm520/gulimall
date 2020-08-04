@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ${package}.${moduleName}.entity.${className}Entity;
 import ${package}.${moduleName}.service.${className}Service;
-import ${mainPath}.common.utils.PageUtils;
-import ${mainPath}.common.utils.R;
-
+import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
+import com.qian.gulimall.common.utils.R;
 
 
 /**
@@ -33,13 +33,13 @@ public class ${className}Controller {
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    //@RequiresPermissions("${moduleName}:${pathName}:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = ${classname}Service.queryPage(params);
-
-        return R.ok().put("page", page);
-    }
+##    @RequestMapping("/list")
+##    //@RequiresPermissions("${moduleName}:${pathName}:list")
+##    public R list(@RequestParam Map<String, Object> params){
+##        PageUtils page = ${classname}Service.queryPage(params);
+##
+##        return R.ok().put("page", page);
+##    }
 
 
     /**

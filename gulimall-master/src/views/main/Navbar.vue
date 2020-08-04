@@ -28,31 +28,35 @@
             </el-badge>
           </template>
         </el-menu-item>
-        <!--<el-menu-item index="1" @click="$router.push({ name: 'theme' })">
-          <template slot="title">
-            <el-badge value="new">
-              <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
-            </el-badge>
-          </template>
-        </el-menu-item>-->
-        <el-menu-item index="2" @click="updatePasswordHandle">
-          <template slot="title">
-            <el-badge value="修改">
-              <icon-svg name="editpwd" class="el-icon-setting"></icon-svg>
-            </el-badge>
-          </template>
-        </el-menu-item>
-        <el-menu-item index="3" @click="logoutHandle">
-          <template slot="title">
-            <el-badge value="退出">
-              <icon-svg name="logout" class="el-icon-setting"></icon-svg>
-            </el-badge>
-          </template>
-        </el-menu-item>
-        <el-menu-item class="site-navbar__avatar" index="4">
+        <el-menu-item class="site-navbar__avatar" index="2">
+          <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
               <img src="../../../static/img/me.png" :alt="userName">{{ userName }}
             </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <div>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <img src="../../../static/img/me.png" style="width: 300px; height: 300px;" class="user-image"
+                         alt="User Image">
+                  </a>
+                </div>
+                <div style="text-align: center; color: #2D64B3; font-size: 20px;">
+                  {{userName}}
+                </div>
+                <div style="text-align: center">
+                  <el-button-group>
+                    <el-button @click.native="updatePasswordHandle" type="warning">
+                      <icon-svg name="editpwd" class="el-icon-setting"></icon-svg>&nbsp;修改密码
+                    </el-button>
+                    <el-button @click.native="logoutHandle" type="danger">
+                      <icon-svg name="logout" class="el-icon-setting"></icon-svg>&nbsp;退出登录
+                    </el-button>
+                  </el-button-group>
+                </div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-menu-item>
       </el-menu>
     </div>
@@ -63,13 +67,14 @@
 
 <script>
   import UpdatePasswordDialog from './UpdatePasswordDialog'
-  import { clearLoginInfo } from '@/utils'
+  import {clearLoginInfo} from '@/utils'
+
   export default {
     name: 'Navbar',
-    data () {
+    data() {
       return {
         updatePassowrdVisible: false,
-        title: '咕鲤商城',
+        title: '谷粒商城',
         logo: '../static/img/guli.png',
         alert: 1000
       }
@@ -79,30 +84,42 @@
     },
     computed: {
       navbarLayoutType: {
-        get () { return this.$store.state.common.navbarLayoutType }
+        get() {
+          return this.$store.state.common.navbarLayoutType
+        }
       },
       sidebarFold: {
-        get () { return this.$store.state.common.sidebarFold },
-        set (val) { this.$store.commit('common/updateSidebarFold', val) }
+        get() {
+          return this.$store.state.common.sidebarFold
+        },
+        set(val) {
+          this.$store.commit('common/updateSidebarFold', val)
+        }
       },
       mainTabs: {
-        get () { return this.$store.state.common.mainTabs },
-        set (val) { this.$store.commit('common/updateMainTabs', val) }
+        get() {
+          return this.$store.state.common.mainTabs
+        },
+        set(val) {
+          this.$store.commit('common/updateMainTabs', val)
+        }
       },
       userName: {
-        get () { return this.$store.state.user.name }
+        get() {
+          return this.$store.state.user.name
+        }
       }
     },
     methods: {
       // 修改密码
-      updatePasswordHandle () {
+      updatePasswordHandle() {
         this.updatePassowrdVisible = true
         this.$nextTick(() => {
           this.$refs.updatePassowrd.init()
         })
       },
       // 退出
-      logoutHandle () {
+      logoutHandle() {
         this.$confirm(`确定进行[退出]操作?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -114,13 +131,14 @@
           }).then(({data}) => {
             if (data && data.code === 0) {
               clearLoginInfo()
-              this.$router.push({ name: 'login' })
+              this.$router.push({name: 'login'})
             }
           })
-        }).catch(() => {})
+        }).catch(() => {
+        })
       },
       // 处理消息
-      messageHandler () {
+      messageHandler() {
         console.log('处理消息')
       }
     }
@@ -133,5 +151,9 @@
     width: 30px;
     height: 30px;
     margin-right: 0px;
+  }
+
+  ul li {
+    list-style-type: none;
   }
 </style>

@@ -51,12 +51,14 @@
         prop="username"
         header-align="center"
         align="center"
+        width="100"
         label="用户名">
       </el-table-column>
       <el-table-column
         prop="operation"
         header-align="center"
         align="center"
+        width="150"
         label="用户操作">
       </el-table-column>
       <el-table-column
@@ -71,12 +73,12 @@
         prop="params"
         header-align="center"
         align="center"
-        width="150"
         :show-overflow-tooltip="true"
         label="请求参数">
       </el-table-column>
       <el-table-column
         prop="time"
+        width="80"
         header-align="center"
         align="center"
         label="执行时长(毫秒)">
@@ -103,7 +105,7 @@
         label="操作">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.roleId)"><icon-svg name="delete"/>&nbsp;删除</el-button>
+            <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.id)"><icon-svg name="delete"/>&nbsp;删除</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -132,16 +134,10 @@
           operation: '',
           ip: '',
           createDate: ['', '']
-        },
-        dataList: [],
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0,
-        dataListLoading: false,
-        selectionDataList: []
+        }
       }
     },
-    created () {
+    activated () {
       this.query('init')
     },
     computed: {
