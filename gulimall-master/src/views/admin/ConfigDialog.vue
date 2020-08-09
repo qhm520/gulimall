@@ -1,9 +1,9 @@
 <template>
-  <el-dialog
-    :close-on-click-modal="false"
-    :visible.sync="visible">
-    <dialog-title :is-add="!dataForm.id" :title="!dataForm.id ? '新增参数' : '修改参数'"></dialog-title>
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+  <gulimall-dialog
+    ref="dialog"
+    :title="!dataForm.id ? '新增参数' : '修改参数'"
+    :icon="!dataForm.id ? 'add' : 'edit'">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="80px">
       <el-form-item label="参数名" prop="paramKey">
         <el-input v-model="dataForm.paramKey" placeholder="参数名"></el-input>
       </el-form-item>
@@ -14,18 +14,14 @@
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false"><icon-svg name="cancel"/>&nbsp;取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()"><icon-svg name="confirm"/>&nbsp;确定</el-button>
-    </span>
-  </el-dialog>
+  </gulimall-dialog>
 </template>
 
 <script>
-  import DialogTitle from '../../components/Operation/DialogTitle'
+  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
   export default {
     name: 'ConfigDialog',
-    components: {DialogTitle},
+    components: {GulimallDialog},
     data () {
       return {
         visible: false,
@@ -48,7 +44,7 @@
     methods: {
       init (id) {
         this.dataForm.id = id || 0
-        this.visible = true
+        this.$refs.dialog.openDialog()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -67,7 +63,7 @@
         })
       },
       // 表单提交
-      dataFormSubmit () {
+      submit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
@@ -86,7 +82,7 @@
                   type: 'success',
                   duration: 1500,
                   onClose: () => {
-                    this.visible = false
+                    this.$refs.dialog.closeDialog()
                     this.$emit('refreshDataList')
                   }
                 })
@@ -100,3 +96,21 @@
     }
   }
 </script>
+
+
+<style scoped>
+  .category-edit {
+    margin-left: 1px;
+    margin-top: 1px;
+    font-size: 16px;
+    background-color: #2D64B3;
+    color: white;
+    border: 0px solid #2D64B3;
+  }
+
+  .blue-background {
+    background-color: #409EFF;
+    color: white;
+  }
+</style>
+

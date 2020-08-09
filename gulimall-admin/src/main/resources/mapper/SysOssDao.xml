@@ -6,9 +6,48 @@
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.qian.gulimall.admin.entity.SysOssEntity" id="sysOssMap">
         <result property="id" column="id"/>
-        <result property="url" column="url"/>
+        <result property="urlGroup" column="url_group"/>
+        <result property="urlPath" column="url_path"/>
+        <result property="originalFilename" column="original_filename"/>
+        <result property="uploadUserId" column="upload_user_id"/>
+        <result property="ip" column="ip"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
         <result property="createDate" column="create_date"/>
     </resultMap>
+
+    <!-- 查询条件 -->
+    <sql id="query_condition">
+        <if test="sysOss.originalFilename != null and sysOss.originalFilename != ''">
+            and original_filename like '%' #{sysOss.originalFilename,jdbcType=VARCHAR}  '%'
+        </if>
+
+        <if test="sysOss.ip != null and sysOss.ip != ''">
+            and ip like '%' #{sysOss.ip,jdbcType=VARCHAR} '%'
+        </if>
+
+        <if test="sysOss.createDateStart != null">
+            and createDate <![CDATA[ >= ]]> #{sysOss.createDateStart,jdbcType=TIMESTAMP}
+        </if>
+        <if test="sysOss.createDateEnd != null">
+            and createDate <![CDATA[ <= ]]> #{sysOss.createDateEnd,jdbcType=TIMESTAMP}
+        </if>
+
+        <if test="sysOss.status != null">
+            and STATUS = #{sysOss.status,jdbcType=VARCHAR}
+        </if>
+    </sql>
+
+    <select id="querySysOssPage" parameterType="com.qian.gulimall.admin.api.criteria.SysOssCriteria" resultType="com.qian.gulimall.admin.api.result.SysOssResult">
+        SELECT * FROM (SELECT t.id, CONCAT(t.url_group, t.url_path) AS url, t.original_filename,
+        (SELECT s.username FROM sys_user s WHERE s.user_id = t.upload_user_id) upload_user,
+        t.ip,
+        t.create_date FROM sys_oss t
+        <where>
+            <include refid="query_condition" />
+        </where>
+        order by t.create_date desc) t
+    </select>
 
 
 </mapper>

@@ -1,97 +1,106 @@
 <template>
   <div class="mod-config">
-    <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
-      <el-form-item label="参数名" prop="paramKey">
-        <el-input v-model="queryCriteria.paramKey" placeholder="参数名" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryCriteria.status" placeholder="请选择">
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <!--查询 和 重置 -->
-      <search-reset :search="query" :reset="reset"></search-reset>
-    </el-form>
-    <operation>
-      <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
-        <icon-svg name="add"/>
-        &nbsp;新增参数
-      </el-button>
-      <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
-                 :disabled="tableSelectData.length <= 0">
-        <icon-svg name="delete"/>
-        &nbsp;批量删除
-      </el-button>
-    </operation>
-    <gulimall-table>
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
-      </el-table-column>
-      <el-table-column
-        label="序号"
-        align="center"
-        width="70px">
-        <template slot-scope="scope">
-          {{scope.$index+1}}
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="id"
-        header-align="center"
-        align="center"
-        width="80"
-        label="ID">
-      </el-table-column>
-      <el-table-column
-        prop="paramKey"
-        header-align="center"
-        align="center"
-        label="参数名">
-      </el-table-column>
-      <el-table-column
-        prop="paramValue"
-        header-align="center"
-        align="center"
-        label="参数值">
-      </el-table-column>
-      <el-table-column
-        prop="remark"
-        header-align="center"
-        align="center"
-        label="备注">
-      </el-table-column>
-      <el-table-column
-        prop="status"
-        header-align="center"
-        align="center"
-        label="状态">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
-          <el-tag v-else size="small">正常</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        fixed="right"
-        header-align="center"
-        align="center"
-        width="180"
-        label="操作">
-        <template slot-scope="scope">
-          <el-button-group>
-            <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.id)"><icon-svg name="edit"/>修改</el-button>
-            <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.id)"><icon-svg name="delete"/>删除</el-button>
-          </el-button-group>
-        </template>
-      </el-table-column>
-    </gulimall-table>
+    <div>
+      <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
+        <el-form-item label="参数名" prop="paramKey">
+          <el-input v-model="queryCriteria.paramKey" placeholder="参数名" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="queryCriteria.status" placeholder="请选择">
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!--查询 和 重置 -->
+        <search-reset :search="query" :reset="reset"></search-reset>
+      </el-form>
+      <operation>
+        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
+          <icon-svg name="add"/>
+          &nbsp;新增参数
+        </el-button>
+        <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
+                   :disabled="tableSelectData.length <= 0">
+          <icon-svg name="delete"/>
+          &nbsp;批量删除
+        </el-button>
+      </operation>
+      <gulimall-table>
+        <el-table-column
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50">
+        </el-table-column>
+        <el-table-column
+          label="序号"
+          align="center"
+          width="70px">
+          <template slot-scope="scope">
+            {{scope.$index+1}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="id"
+          header-align="center"
+          align="center"
+          width="80"
+          label="ID">
+        </el-table-column>
+        <el-table-column
+          prop="paramKey"
+          header-align="center"
+          align="center"
+          label="参数名">
+        </el-table-column>
+        <el-table-column
+          prop="paramValue"
+          header-align="center"
+          align="center"
+          label="参数值">
+        </el-table-column>
+        <el-table-column
+          prop="remark"
+          header-align="center"
+          align="center"
+          label="备注">
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          header-align="center"
+          align="center"
+          label="状态">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
+            <el-tag v-else size="small">正常</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          fixed="right"
+          header-align="center"
+          align="center"
+          width="180"
+          label="操作">
+          <template slot-scope="scope">
+            <el-button-group>
+              <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.id)">
+                <icon-svg name="edit"/>
+                修改
+              </el-button>
+              <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.id)">
+                <icon-svg name="delete"/>
+                删除
+              </el-button>
+            </el-button-group>
+          </template>
+        </el-table-column>
+      </gulimall-table>
+
+    </div>
     <!-- 弹窗, 新增 / 修改 -->
     <config-dialog v-if="openDialog" ref="configDialog" @refreshDataList="query"></config-dialog>
   </div>
@@ -104,8 +113,9 @@
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import {mapGetters} from 'vuex'
   import {dateFormat} from "../../filters";
+
   export default {
-    data () {
+    data() {
       return {
         queryCriteria: {
           paramKey: '',
@@ -121,7 +131,7 @@
       SearchReset,
       GulimallTable
     },
-    activated () {
+    activated() {
       this.query('init')
     },
     computed: {
@@ -150,22 +160,20 @@
       },
 
       // 新增 / 修改
-      addOrUpdateHandle (id) {
+      addOrUpdateHandle(id) {
         this.openDialog = true
         this.$nextTick(() => {
           this.$refs.configDialog.init(id)
         })
       },
       // 删除
-      deleteHandle (id) {
+      deleteHandle(id) {
         var ids = id ? [id] : this.tableSelectData.map(item => {
           return item.id
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
+        }).then(res=>{
           this.$http({
             url: this.$http.adornUrl('/sys/config/delete'),
             method: 'post',
@@ -184,8 +192,11 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {})
+        })
       }
     }
   }
 </script>
+
+<style scoped>
+</style>

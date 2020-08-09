@@ -73,3 +73,12 @@ ribbon:
   ConnectTimeout: 3000 #ribbon请求连接的超时时间，默认值2000
   MaxAutoRetries: 0     #对当前实例的重试次数，默认0
   MaxAutoRetriesNextServer: 1 #对切换实例的重试次数，默认1
+
+
+fdfs:
+  so-timeout: 2000
+  connect-timeout: 2000
+  tracker-list:
+    - 169.254.115.10:22122
+  service:
+    169.254.115.10:9200

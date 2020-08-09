@@ -1,8 +1,15 @@
 package com.qian.gulimall.admin.dao;
 
-import com.qian.gulimall.admin.entity.SysOssEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qian.gulimall.admin.api.criteria.SysOssCriteria;
+import com.qian.gulimall.admin.api.result.SysOssResult;
+import com.qian.gulimall.admin.entity.SysOssEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 文件上传
@@ -13,5 +20,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SysOssDao extends BaseMapper<SysOssEntity> {
+
+    public IPage<SysOssResult> querySysOssPage(Page<SysOssCriteria> page, @Param("sysOss") SysOssCriteria sysOssCriteria);
 	
 }

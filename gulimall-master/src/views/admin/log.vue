@@ -23,7 +23,9 @@
       <search-reset :search="query" :reset="reset"></search-reset>
     </el-form>
     <operation>
-        <el-button  type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0"> <icon-svg name="delete"/>&nbsp;批量删除</el-button>
+      <el-button type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0">
+        <icon-svg name="delete"/>&nbsp;批量删除
+      </el-button>
     </operation>
     <gulimall-table>
       <el-table-column
@@ -105,7 +107,9 @@
         label="操作">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.id)"><icon-svg name="delete"/>&nbsp;删除</el-button>
+            <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.id)">
+              <icon-svg name="delete"/>&nbsp;删除
+            </el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -127,7 +131,7 @@
       SearchReset,
       GulimallTable
     },
-    data () {
+    data() {
       return {
         queryCriteria: {
           username: '',
@@ -137,7 +141,7 @@
         }
       }
     },
-    activated () {
+    activated() {
       this.query('init')
     },
     computed: {
@@ -171,15 +175,14 @@
         });
       },
       // 删除
-      deleteHandle (id) {
+      deleteHandle(id) {
         let ids = id ? [id] : this.tableSelectData.map(item => {
           return item.id
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
+        }).then(res => {
           this.$http({
             url: this.$http.adornUrl('/sys/log/delete'),
             method: 'post',
@@ -187,7 +190,7 @@
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
-                message: '操作成功',
+                message: `删除系统日志[id=${ids.join(',')}]成功`,
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
@@ -198,7 +201,7 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {})
+        })
       }
     }
   }

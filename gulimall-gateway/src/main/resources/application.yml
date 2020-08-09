@@ -5,56 +5,18 @@ spring:
         - id: baidu-route
           uri: https://www.baidu.com
           predicates:
-             -  Query=url,baidu
+            -  Query=url,baidu
         - id: qq-route
           uri: https://wwwqq.com
           predicates:
             -  Query=url,qq
 
-        - id: gulimall-coupon-route
-          uri: lb://gulimall-coupon
+        - id: gulimall-product-route
+          uri: lb://gulimall-product
           predicates:
-            - Path=/api/coupon/**
+            - Path=/api/product/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
-
-
-        - id: gulimall-member-route
-            uri: lb://gulimall-member
-            predicates:
-              - Path=/api/coupon/**
-            filters:
-              - RewritePath=/api/(?<segment>.*),/$\{segment}
-
-        - id: gulimall-order-route
-            uri: lb://gulimall-order
-            predicates:
-              - Path=/api/order/**
-            filters:
-              - RewritePath=/api/(?<segment>.*),/$\{segment}
-
-        - id: gulimall-product-route
-            uri: lb://gulimall-product
-            predicates:
-              - Path=/api/product/**
-            filters:
-              - RewritePath=/api/(?<segment>.*),/$\{segment}
-
-
-        - id: gulimall-search-route
-            uri: lb://gulimall-search
-            predicates:
-              - Path=/api/search/**
-            filters:
-              - RewritePath=/api/(?<segment>.*),/$\{segment}
-
-
-        - id: gulimall-third-party-route
-            uri: lb://gulimall-third-party
-            predicates:
-              - Path=/api/third/**
-            filters:
-              - RewritePath=/api/(?<segment>.*),/$\{segment}
 
         - id: gulimall-admin-route
           uri: lb://gulimall-admin

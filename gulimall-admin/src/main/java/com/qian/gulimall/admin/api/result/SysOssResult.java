@@ -1,11 +1,11 @@
-package com.qian.gulimall.admin.entity;
+package com.qian.gulimall.admin.api.result;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 文件上传
@@ -15,10 +15,9 @@ import lombok.Data;
  * @date 2020-04-19 08:57:20
  */
 @Data
-@TableName("sys_oss")
-public class SysOssEntity implements Serializable {
+public class SysOssResult implements Serializable {
 
-	private static final long serialVersionUID = 6056087424450298008L;
+	private static final long serialVersionUID = 8087613497146124073L;
 	/**
 	 *
 	 */
@@ -26,34 +25,24 @@ public class SysOssEntity implements Serializable {
 	private Long id;
 
 	/**
-	 * URL地址-分组
+	 * URL地址
 	 */
-	private String urlGroup;
+	private String url;
 
 	/**
-	 * URL地址-路径
-	 */
-	private String urlPath;
-
-	/**
-	 * 原文件名称
+     * 原文件名称
 	 */
 	private String originalFilename;
 
 	/**
-	 * 上传者ID
+	 * 上传者
 	 */
-	private Long uploadUserId;
+	private String uploadUser;
 
-	/**
-	 * 上传者IP地址
+    /**
+     * 上传者IP地址
 	 */
 	private String ip;
-
-	/**
-	 * 状态   0：隐藏   1：显示
-	 */
-	private Integer status;
 
 	/**
 	 * 备注

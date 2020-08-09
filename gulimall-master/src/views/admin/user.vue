@@ -199,11 +199,9 @@
         var userIds = id ? [id] : this.tableSelectData.map(item => {
           return item.userId
         })
-        this.$confirm(`确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        this.$GulimallConfirm({
+          content: `确定对[id=${userIds.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
+        }).then(res=>{
           this.$http({
             url: this.$http.adornUrl('/sys/user/delete'),
             method: 'post',
@@ -222,7 +220,6 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {
         })
       }
     }

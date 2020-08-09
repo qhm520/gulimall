@@ -1,5 +1,5 @@
 <template>
-  <div v-if="show">
+  <div v-if="visible">
     <el-row style="background-color: #2D64B3">
       <el-col :span="4">
         <el-button class="category-edit">
@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="20">
         <div style="float: right;margin-right: 10px;height: 40px;">
-          <el-button class="category-edit">
+          <el-button class="category-edit" @click="closeEdit">
             <icon-svg name="cancel"/>
           </el-button>
         </div>
@@ -18,10 +18,10 @@
       <slot></slot>
       <el-row style="margin-top: 20px; text-align: center; background-color: #bce8f1; border-radius: 10px;">
         <el-button-group>
-          <el-button class="blue-background" @click="show = false">
+          <el-button class="blue-background" @click="cancelEdit">
             <icon-svg name="cancel"/>&nbsp;取消
           </el-button>
-          <el-button class="blue-background" @click="submit">
+          <el-button class="blue-background" @click="saveEdit" >
             <icon-svg name="save"/>&nbsp;保存
           </el-button>
         </el-button-group>
@@ -32,20 +32,30 @@
 
 <script>
   export default {
-    name: "GulimallEdit",
-    data() {
+    name: 'GulimallEit',
+    components: {},
+    props: {
+      icon: String,
+      name: String,
+      close: Function,
+      cancel: Function
+    },
+    data () {
       return {
-        show: false
+        visible: false
       }
     },
-    props: {
-      submit: Function,
-      icon: String,
-      name: String
-    },
     methods: {
-      isShow(val) {
-        this.show = val
+      closeEdit () {
+        this.visible = false
+        this.$emit('close')
+      },
+      cancelEdit () {
+        this.visible = false
+      },
+      saveEdit () {
+        this.visible = false
+        this.$emit('submit')
       }
     }
   }

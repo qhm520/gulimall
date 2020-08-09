@@ -17,8 +17,8 @@ import lombok.Data;
 @Data
 @TableName("sys_captcha")
 public class SysCaptchaEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 6186433692959988995L;
 	/**
 	 * uuid
 	 */

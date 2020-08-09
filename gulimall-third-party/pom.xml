@@ -15,10 +15,22 @@
 
 
     <dependencies>
-        <dependency>
+      <!--  <dependency>
             <groupId>com.qian.gulimall</groupId>
             <artifactId>gulimall-security</artifactId>
             <version>${project.version}</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.github.tobato</groupId>
+            <artifactId>fastdfs-client</artifactId>
+            <version>1.27.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 服务注册/发现 -->

@@ -11,8 +11,10 @@ import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/a
 import { isAuth } from '@/utils'
 import './filters' // 加载过滤器
 import cloneDeep from 'lodash/cloneDeep'
+import gulimallConfirm from './utils/gulimallConfirm'
 
 Vue.use(VueCookie)
+Vue.use(gulimallConfirm)
 Vue.config.productionTip = false
 
 // 非生产环境, 适配mockjs模拟数据                 // api: https://github.com/nuysoft/Mock

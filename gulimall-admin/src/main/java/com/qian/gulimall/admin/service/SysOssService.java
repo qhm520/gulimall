@@ -1,10 +1,10 @@
 package com.qian.gulimall.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.admin.api.criteria.SysOssCriteria;
 import com.qian.gulimall.admin.entity.SysOssEntity;
-
-import java.util.Map;
+import com.qian.gulimall.common.utils.PageUtils;
+import com.qian.gulimall.common.utils.Pageable;
 
 /**
  * 文件上传
@@ -15,6 +15,6 @@ import java.util.Map;
  */
 public interface SysOssService extends IService<SysOssEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Pageable pageable, SysOssCriteria sysOssCriteria);
 }
 

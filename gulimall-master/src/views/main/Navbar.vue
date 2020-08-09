@@ -120,11 +120,9 @@
       },
       // 退出
       logoutHandle() {
-        this.$confirm(`确定进行[退出]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        this.$GulimallConfirm({
+          content: `确定进行[<span style="color: red;display:inline;">退出</span>]操作?`
+        }).then(res => {
           this.$http({
             url: this.$http.adornUrl('/authentication/logout'),
             method: 'get'
@@ -134,7 +132,6 @@
               this.$router.push({name: 'login'})
             }
           })
-        }).catch(() => {
         })
       },
       // 处理消息
