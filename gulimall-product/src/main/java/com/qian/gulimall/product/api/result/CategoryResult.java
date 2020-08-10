@@ -1,8 +1,10 @@
-package com.qian.gulimall.product.api.dto;
+package com.qian.gulimall.product.api.result;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,9 +15,9 @@ import java.io.Serializable;
  * Time 16:10
  */
 @Data
-public class CategoryDto implements Serializable {
+public class CategoryResult implements Serializable {
 
-    private static final long serialVersionUID = 6762921050396734663L;
+    private static final long serialVersionUID = 972548606833064019L;
     /**
      * 分类id
      */
@@ -52,4 +54,7 @@ public class CategoryDto implements Serializable {
      * 商品数量
      */
     private Integer productCount;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<CategoryResult> children;
 }

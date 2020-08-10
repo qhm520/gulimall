@@ -3,10 +3,8 @@ package com.qian.gulimall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
-import com.qian.gulimall.common.utils.R;
+import com.qian.gulimall.product.api.criteria.BrandCriteria;
 import com.qian.gulimall.product.entity.BrandEntity;
-
-import java.util.Map;
 
 /**
  * 品牌
@@ -17,5 +15,6 @@ import java.util.Map;
  */
 public interface BrandService extends IService<BrandEntity> {
 
+    PageUtils queryPage(Pageable pageable, BrandCriteria brandCriteria);
 }
 

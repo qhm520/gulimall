@@ -2,6 +2,7 @@ package com.qian.gulimall.product.controller;
 
 import com.qian.gulimall.common.utils.R;
 import com.qian.gulimall.product.api.dto.CategoryDto;
+import com.qian.gulimall.product.api.result.CategoryResult;
 import com.qian.gulimall.product.entity.CategoryEntity;
 import com.qian.gulimall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class CategoryController {
      */
     @RequestMapping("/list/tree")
     public R list(){
-        List<CategoryDto> entities = categoryService.listWithTree();
+        List<CategoryResult> entities = categoryService.listWithTree();
         return R.ok().put("data", entities);
     }
 
@@ -45,7 +46,7 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+        return R.ok().put("data", category);
     }
 
     /**
@@ -78,6 +79,7 @@ public class CategoryController {
     public R delete(@RequestBody Long[] catIds){
 		categoryService.removeByIds(Arrays.asList(catIds));
 
+		categoryService.removeMenuByIds(Arrays.asList(catIds));
         return R.ok();
     }
 

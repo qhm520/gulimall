@@ -4,9 +4,7 @@
     :show-close="false"
     :append-to-body="true"
     :visible.sync="visible">
-
     <div slot="title" style="background-color: #2D64B3; margin-top: -20px;margin-left: -20px; margin-right: -20px">
-      <!--<icon-svg name="add" /> 新增参数-->
       <el-button class="gulimall-dialog">
         <icon-svg :name="icon"/>&nbsp;&nbsp;{{title}}
       </el-button>
@@ -14,9 +12,7 @@
         <icon-svg name="cancel" />
       </el-button>
     </div>
-
     <slot></slot>
-
     <div slot="footer" style="text-align: center; ">
       <el-button-group>
         <el-button type="primary" @click="visible = false"><icon-svg name="cancel"/>&nbsp;&nbsp;取消</el-button>

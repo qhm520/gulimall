@@ -1,7 +1,7 @@
 package com.qian.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.qian.gulimall.product.api.dto.CategoryDto;
+import com.qian.gulimall.product.api.result.CategoryResult;
 import com.qian.gulimall.product.entity.CategoryEntity;
 
 import java.util.List;
@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface CategoryService extends IService<CategoryEntity> {
 
-    List<CategoryDto> listWithTree();
+    List<CategoryResult> listWithTree();
+
+    void removeMenuByIds(List<Long> asList);
 }
 

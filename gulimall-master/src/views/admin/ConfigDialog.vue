@@ -99,18 +99,6 @@
 
 
 <style scoped>
-  .category-edit {
-    margin-left: 1px;
-    margin-top: 1px;
-    font-size: 16px;
-    background-color: #2D64B3;
-    color: white;
-    border: 0px solid #2D64B3;
-  }
 
-  .blue-background {
-    background-color: #409EFF;
-    color: white;
-  }
 </style>
 
