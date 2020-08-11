@@ -1,7 +1,7 @@
 <template>
   <gulimall-dialog
     ref="dialog"
-    :title="!dataForm.id ? '新增品牌' : '修改品牌'"
+    :title="!dataForm.id ? '新增规格参数' : '修改规格参数'"
     :icon="!dataForm.id ? 'add' : 'edit'">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="120px">
       <el-form-item label="品牌名" prop="name">
@@ -36,9 +36,7 @@
   import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
   export default {
     name: 'ConfigDialog',
-    components: {
-      GulimallDialog
-    },
+    components: {GulimallDialog},
     data () {
       return {
         visible: false,

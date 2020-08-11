@@ -1,8 +1,8 @@
 <template>
   <div class="mod-menu">
-    <operation>
+    <gulimall-operation>
       <el-button v-if="isAuth('sys:menu:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>&nbsp;新增菜单</el-button>
-    </operation>
+    </gulimall-operation>
     <el-table
       :data="dataList"
       row-key="menuId"
@@ -84,7 +84,7 @@
 <script>
   import { treeDataTranslate } from '@/utils'
   import MenuDialog from './MenuDialog'
-  import Operation from "../../components/Operation/Operation";
+  import GulimallOperation from "../../components/GulimcallOperation/GulimallOperation";
   export default {
     data () {
       return {
@@ -96,7 +96,7 @@
     },
     components: {
       MenuDialog,
-      Operation
+      GulimallOperation
     },
     activated () {
       this.getDataList()
@@ -123,11 +123,9 @@
       },
       // 删除
       deleteHandle (id) {
-        this.$confirm(`确定对[id=${id}]进行[删除]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        this.$GulimallConfirm({
+          content: `确定对[id=${id}]进行[<span style="color: red;display:inline;">删除</span>]操作?`
+        }).then(res => {
           this.$http({
             url: this.$http.adornUrl(`/sys/menu/delete/${id}`),
             method: 'post',
@@ -146,7 +144,7 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {})
+        })
       }
     }
   }

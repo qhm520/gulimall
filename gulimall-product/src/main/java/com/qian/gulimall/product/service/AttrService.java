@@ -3,10 +3,8 @@ package com.qian.gulimall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
-import com.qian.gulimall.common.utils.R;
+import com.qian.gulimall.product.api.criteria.AttrCriteria;
 import com.qian.gulimall.product.entity.AttrEntity;
-
-import java.util.Map;
 
 /**
  * 商品属性
@@ -17,5 +15,6 @@ import java.util.Map;
  */
 public interface AttrService extends IService<AttrEntity> {
 
+    PageUtils queryPage(Pageable pageable, AttrCriteria attrCriteria);
 }
 

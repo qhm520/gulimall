@@ -1,9 +1,9 @@
 <template>
-  <el-dialog
-    :close-on-click-modal="false"
-    :visible.sync="visible">
-    <dialog-title :is-add="!dataForm.id" :title="!dataForm.id ? '新增定时任务' : '修改定时任务'"></dialog-title>
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
+  <gulimall-dialog
+    ref="dialog"
+    :title="!dataForm.id ? '新增定时任务' : '修改定时任务'"
+    :icon="!dataForm.id ? 'add' : 'edit'">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="100px">
       <el-form-item label="bean名称" prop="beanName">
         <el-input v-model="dataForm.beanName" placeholder="spring bean名称, 如: testTask"></el-input>
       </el-form-item>
@@ -17,18 +17,16 @@
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
-    </span>
-  </el-dialog>
+  </gulimall-dialog>
 </template>
 
 <script>
-  import DialogTitle from '../../components/Operation/DialogTitle'
+  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog"
   export default {
     name: 'ScheduleDialog',
-    components: { DialogTitle},
+    components: {
+      GulimallDialog
+    },
     data () {
       return {
         visible: false,
@@ -53,7 +51,7 @@
     methods: {
       init (id) {
         this.dataForm.id = id || 0
-        this.visible = true
+        this.$refs.dialog.openDialog()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -74,7 +72,7 @@
         })
       },
       // 表单提交
-      dataFormSubmit () {
+      submit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
@@ -95,7 +93,7 @@
                   type: 'success',
                   duration: 1500,
                   onClose: () => {
-                    this.visible = false
+                    this.$refs.dialog.closeDialog()
                     this.$emit('refreshDataList')
                   }
                 })

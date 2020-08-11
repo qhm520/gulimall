@@ -16,9 +16,9 @@
           </el-select>
         </el-form-item>
         <!--查询 和 重置 -->
-        <search-reset :search="query" :reset="reset"></search-reset>
+        <gulimall-search :search="query" :reset="reset"></gulimall-search>
       </el-form>
-      <operation>
+      <gulimall-operation>
         <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
           <icon-svg name="add"/>
           &nbsp;新增品牌
@@ -28,7 +28,7 @@
           <icon-svg name="delete"/>
           &nbsp;批量删除
         </el-button>
-      </operation>
+      </gulimall-operation>
       <gulimall-table>
         <el-table-column
           type="selection"
@@ -122,8 +122,8 @@
 
 <script>
   import BrandDialog from "./BrandDialog";
-  import Operation from '../../components/Operation/Operation'
-  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
+  import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import {mapGetters} from 'vuex'
 
@@ -141,8 +141,8 @@
     },
     components: {
       BrandDialog,
-      Operation,
-      SearchReset,
+      GulimallOperation,
+      GulimallSearch,
       GulimallTable
     },
     activated() {

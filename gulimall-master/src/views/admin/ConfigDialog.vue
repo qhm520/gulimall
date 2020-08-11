@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
+  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog"
   export default {
     name: 'ConfigDialog',
     components: {GulimallDialog},

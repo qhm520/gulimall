@@ -36,9 +36,7 @@
   import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
   export default {
     name: 'ConfigDialog',
-    components: {
-      GulimallDialog
-    },
+    components: {GulimallDialog},
     data () {
       return {
         visible: false,

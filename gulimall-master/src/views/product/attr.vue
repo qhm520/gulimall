@@ -2,11 +2,11 @@
   <div class="mod-config">
     <div>
       <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
-        <el-form-item label="参数名" prop="paramKey">
-          <el-input v-model="queryCriteria.paramKey" placeholder="参数名" clearable></el-input>
+        <el-form-item label="品牌名" prop="name">
+          <el-input v-model="queryCriteria.name" placeholder="品牌名" clearable></el-input>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="queryCriteria.status" placeholder="请选择">
+        <el-form-item label="显示状态" prop="showStatus">
+          <el-select v-model="queryCriteria.showStatus" placeholder="请选择">
             <el-option
               v-for="item in statusList"
               :key="item.value"
@@ -21,7 +21,7 @@
       <gulimall-operation>
         <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
           <icon-svg name="add"/>
-          &nbsp;新增参数
+          &nbsp;新增规格参数
         </el-button>
         <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
                    :disabled="tableSelectData.length <= 0">
@@ -45,39 +45,53 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="id"
+          prop="brandId"
           header-align="center"
           align="center"
-          width="80"
-          label="ID">
+          label="品牌id">
         </el-table-column>
         <el-table-column
-          prop="paramKey"
+          prop="name"
           header-align="center"
           align="center"
-          label="参数名">
+          label="品牌名">
         </el-table-column>
         <el-table-column
-          prop="paramValue"
+          prop="logo"
           header-align="center"
           align="center"
-          label="参数值">
+          label="品牌logo地址">
         </el-table-column>
         <el-table-column
-          prop="remark"
+          prop="descript"
           header-align="center"
           align="center"
-          label="备注">
+          label="介绍">
         </el-table-column>
-        <el-table-column
-          prop="status"
-          header-align="center"
-          align="center"
-          label="状态">
+        <el-table-column prop="showStatus" header-align="center" align="center" label="显示状态">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
-            <el-tag v-else size="small">正常</el-tag>
+            <el-switch
+              v-model="scope.row.showStatus"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              :active-value="1"
+              :inactive-value="0"
+              @click.stop.native
+              @change="updateBrandStatus(scope.row)"
+            ></el-switch>
           </template>
+        </el-table-column>
+        <el-table-column
+          prop="firstLetter"
+          header-align="center"
+          align="center"
+          label="检索首字母">
+        </el-table-column>
+        <el-table-column
+          prop="sort"
+          header-align="center"
+          align="center"
+          label="排序">
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -87,11 +101,11 @@
           label="操作">
           <template slot-scope="scope">
             <el-button-group>
-              <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.id)">
+              <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.brandId)">
                 <icon-svg name="edit"/>
                 修改
               </el-button>
-              <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.id)">
+              <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.brandId)">
                 <icon-svg name="delete"/>
                 删除
               </el-button>
@@ -102,31 +116,31 @@
 
     </div>
     <!-- 弹窗, 新增 / 修改 -->
-    <config-dialog v-if="openDialog" ref="configDialog" @refreshDataList="query"></config-dialog>
+    <attr-dialog v-if="openDialog" ref="attrDialog" @refreshDataList="query"></attr-dialog>
   </div>
 </template>
 
 <script>
-  import ConfigDialog from './ConfigDialog'
+  import AttrDialog from "./AttrDialog";
   import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
   import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import {mapGetters} from 'vuex'
-  import {dateFormat} from "../../filters";
 
   export default {
+    name: 'attr',
     data() {
       return {
         queryCriteria: {
-          paramKey: '',
-          status: ''
+          name: '',
+          showStatus: ''
         },
         statusList: [{value: 0, label: '禁用'}, {value: 1, label: '正常'}],  // TODO 以后从字典中获取
         openDialog: false
       }
     },
     components: {
-      ConfigDialog,
+      AttrDialog,
       GulimallOperation,
       GulimallSearch,
       GulimallTable
@@ -150,12 +164,31 @@
        */
       query(type) {
         this.$store.dispatch('query', {
-          url: '/sys/config/list',
+          url: '/product/brand/list',
           type: type,
           formData: {
-            'paramKey': this.queryCriteria.paramKey,
-            'status': this.queryCriteria.status
+            'name': this.queryCriteria.name,
+            'show_status': this.queryCriteria.showStatus
           }
+        });
+      },
+
+      /**
+       * 更新状态
+       * @param data
+       */
+      updateBrandStatus (data) {
+        let { brandId, showStatus } = data
+        //发送请求修改状态
+        this.$http({
+          url: this.$http.adornUrl("/product/brand/update/status"),
+          method: "post",
+          data: this.$http.adornData({ brandId, showStatus }, false)
+        }).then(({ data }) => {
+          this.$message({
+            type: "success",
+            message: "状态更新成功"
+          });
         });
       },
 
@@ -163,17 +196,17 @@
       addOrUpdateHandle(id) {
         this.openDialog = true
         this.$nextTick(() => {
-          this.$refs.configDialog.init(id)
+          this.$refs.attrDialog.init(id)
         })
       },
       // 删除
       deleteHandle(id) {
-        var ids = id ? [id] : this.tableSelectData.map(item => {
-          return item.id
+        let ids = id ? [id] : this.tableSelectData.map(item => {
+          return item.brandId
         })
         this.$GulimallConfirm({
           content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
-        }).then(res => {
+        }).then(res=>{
           this.$http({
             url: this.$http.adornUrl('/sys/config/delete'),
             method: 'post',
@@ -181,7 +214,7 @@
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
-                message: `删除[id=${ids.join(',')}]参数成功`,
+                message: '删除品牌成功',
                 type: 'success',
                 duration: 1500,
                 onClose: () => {

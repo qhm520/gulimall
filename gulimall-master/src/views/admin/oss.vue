@@ -28,16 +28,16 @@
           </el-date-picker>
         </el-form-item>
         <!--查询 和 重置 -->
-        <search-reset :search="query" :reset="reset"></search-reset>
+        <gulimall-search :search="query" :reset="reset"></gulimall-search>
       </el-form>
-      <operation>
+      <gulimall-operation>
         <el-button type="primary" @click="upload">
           <icon-svg name="oss"/>&nbsp;上传文件
         </el-button>
         <el-button type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0">
           <icon-svg name="delete"/>&nbsp;批量删除
         </el-button>
-      </operation>
+      </gulimall-operation>
       <gulimall-table>
         <el-table-column
           type="selection"
@@ -124,8 +124,8 @@
 </template>
 
 <script>
-  import Operation from '../../components/Operation/Operation'
-  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
+  import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import GulimallEdit from "../../components/GulimallEdit/GulimallEdit";
   import {mapGetters} from 'vuex'
@@ -134,8 +134,8 @@
   export default {
     name: 'oss',
     components: {
-      Operation,
-      SearchReset,
+      GulimallOperation,
+      GulimallSearch,
       GulimallTable,
       GulimallEdit
     },
@@ -202,11 +202,9 @@
         let ids = id ? [id] : this.tableSelectData.map(item => {
           return item.id
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
+      }).then(() => {
           this.$http({
             url: this.$http.adornUrl('/sys/log/delete'),
             method: 'post',

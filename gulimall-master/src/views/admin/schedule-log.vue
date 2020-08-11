@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-schedule">
+  <div class="mod-schedule-log">
     <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query">
       <el-form-item label="bean名称" prop="beanName">
         <el-input v-model="queryCriteria.beanName" placeholder="bean名称" clearable></el-input>
@@ -24,10 +24,13 @@
         </el-date-picker>
       </el-form-item>
       <!--查询 和 重置 -->
-      <search-reset :search="query" :reset="reset"></search-reset>
+      <gulimall-search :search="query" :reset="reset"></gulimall-search>
     </el-form>
-    <operation>
-    </operation>
+    <!--操作-->
+    <gulimall-operation>
+      <el-button v-if="isAuth('sys:schedule:delete')" type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="delete"/>&nbsp;批量删除</el-button>
+    </gulimall-operation>
+    <!--列表-->
     <gulimall-table>
       <el-table-column
         type="selection"
@@ -92,6 +95,18 @@
         width="180"
         label="执行时间">
       </el-table-column>
+      <el-table-column
+        fixed="right"
+        header-align="center"
+        align="center"
+        width="100"
+        label="操作">
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button v-if="isAuth('sys:schedule:delete')" type="danger" size="small" @click="deleteHandle(scope.row.logId)"><icon-svg name="delete"/>&nbsp;删除</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
     </gulimall-table>
   </div>
 
@@ -99,8 +114,8 @@
 
 <script>
   import {dateFormat} from '../../filters'
-  import Operation from '../../components/Operation/Operation'
-  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
+  import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import {mapGetters} from 'vuex'
 
@@ -118,8 +133,8 @@
       }
     },
     components: {
-      Operation,
-      SearchReset,
+      GulimallOperation,
+      GulimallSearch,
       GulimallTable
     },
     activated() {
@@ -153,6 +168,34 @@
             'createTimeEnd': end
           }
         });
+      },
+      // 删除
+      deleteHandle (id) {
+        let ids = id ? [id] : this.tableSelectData.map(item => {
+          return item.logId
+        })
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
+        }).then(res => {
+          this.$http({
+            url: this.$http.adornUrl('/sys/scheduleLog/delete'),
+            method: 'post',
+            data: this.$http.adornData(ids, false)
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.query('init')
+                }
+              })
+            } else {
+              this.$message.error(data.msg)
+            }
+          }).catch(() => {})
+        })
       },
       // 失败信息
       showErrorInfo (id) {

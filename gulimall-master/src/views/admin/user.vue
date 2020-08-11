@@ -27,21 +27,19 @@
         </el-date-picker>
       </el-form-item>
       <!--查询 和 重置 -->
-      <search-reset :search="query" :reset="reset"></search-reset>
+      <gulimall-search :search="query" :reset="reset"></gulimall-search>
     </el-form>
-    <operation>
-      <div>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
-          <icon-svg name="add"/>
-          &nbsp;新增用户
-        </el-button>
-        <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
-                   :disabled="tableSelectData.length <= 0">
-          <icon-svg name="delete"/>
-          &nbsp;批量删除
-        </el-button>
-      </div>
-    </operation>
+    <gulimall-operation>
+      <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
+        <icon-svg name="add"/>
+        &nbsp;新增用户
+      </el-button>
+      <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
+                 :disabled="tableSelectData.length <= 0">
+        <icon-svg name="delete"/>
+        &nbsp;批量删除
+      </el-button>
+    </gulimall-operation>
     <gulimall-table>
       <el-table-column
         type="selection"
@@ -129,8 +127,8 @@
 <script>
   import UserDialog from './UserDialog'
   import {dateFormat} from '../../filters'
-  import Operation from '../../components/Operation/Operation'
-  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
+  import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import {mapGetters} from 'vuex'
 
@@ -150,8 +148,8 @@
     },
     components: {
       UserDialog,
-      Operation,
-      SearchReset,
+      GulimallOperation,
+      GulimallSearch,
       GulimallTable
     },
     activated() {
@@ -196,7 +194,7 @@
       },
       // 删除
       deleteHandle(id) {
-        var userIds = id ? [id] : this.tableSelectData.map(item => {
+        let userIds = id ? [id] : this.tableSelectData.map(item => {
           return item.userId
         })
         this.$GulimallConfirm({

@@ -1,9 +1,9 @@
 <template>
-  <el-dialog
-    :close-on-click-modal="false"
-    :visible.sync="visible">
-    <dialog-title :is-add="!dataForm.id" :title="!dataForm.id ? '新增菜单' : '修改菜单'"></dialog-title>
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+  <gulimall-dialog
+    ref="dialog"
+    :title="!dataForm.id ? '新增菜单' : '修改菜单'"
+    :icon="!dataForm.id ? 'add' : 'edit'">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="80px">
       <el-form-item label="类型" prop="type">
         <el-radio-group v-model="dataForm.type">
           <el-radio v-for="(type, index) in dataForm.typeList" :label="index" :key="index">{{ type }}</el-radio>
@@ -70,20 +70,18 @@
         </el-row>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false"><icon-svg name="cancel"/>&nbsp;取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()"><icon-svg name="confirm"/>&nbsp;确定</el-button>
-    </span>
-  </el-dialog>
+  </gulimall-dialog>
 </template>
 
 <script>
   import { treeDataTranslate } from '@/utils'
-  import DialogTitle from "../../components/Operation/DialogTitle"
+  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
   import Icon from '@/icons'
   export default {
     name: 'MenuDialog',
-    components: {DialogTitle},
+    components: {
+      GulimallDialog
+    },
     data () {
       var validateUrl = (rule, value, callback) => {
         if (this.dataForm.type === 1 && !/\S/.test(value)) {
@@ -139,7 +137,7 @@
           console.log(data)
           this.menuList = treeDataTranslate(data.menuList, 'menuId')
         }).then(() => {
-          this.visible = true
+          this.$refs.dialog.openDialog()
           this.$nextTick(() => {
             this.$refs['dataForm'].resetFields()
           })
@@ -182,7 +180,7 @@
         this.dataForm.icon = iconName
       },
       // 表单提交
-      dataFormSubmit () {
+      submit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
@@ -205,7 +203,7 @@
                   type: 'success',
                   duration: 1500,
                   onClose: () => {
-                    this.visible = false
+                    this.$refs.dialog.closeDialog()
                     this.$emit('refreshDataList')
                   }
                 })

@@ -1,8 +1,8 @@
 <template>
-  <el-dialog
-    :close-on-click-modal="false"
-    :visible.sync="visible">
-    <dialog-title :is-add="!dataForm.id" :title="!dataForm.id ? '新增用户' : '修改角色'"></dialog-title>
+  <gulimall-dialog
+    ref="dialog"
+    :title="!dataForm.id ? '新增角色' : '修改角色'"
+    :icon="!dataForm.id ? 'add' : 'edit'">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <el-form-item label="角色名称" prop="roleName">
         <el-input v-model="dataForm.roleName" placeholder="角色名称"></el-input>
@@ -21,19 +21,17 @@
         </el-tree>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false"><icon-svg name="cancel"/>&nbsp;取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()"><icon-svg name="confirm"/>&nbsp;确定</el-button>
-    </span>
-  </el-dialog>
+  </gulimall-dialog>
 </template>
 
 <script>
   import { treeDataTranslate } from '@/utils'
-  import DialogTitle from '../../components/Operation/DialogTitle'
+  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog"
   export default {
     name: 'RoleDialog',
-    components: { DialogTitle },
+    components: {
+      GulimallDialog
+    },
     data () {
       return {
         visible: false,
@@ -65,7 +63,7 @@
         }).then(({data}) => {
           this.menuList = treeDataTranslate(data, 'menuId')
         }).then(() => {
-          this.visible = true
+          this.$refs.dialog.openDialog()
           this.$nextTick(() => {
             this.$refs['dataForm'].resetFields()
             this.$refs.menuListTree.setCheckedKeys([])
@@ -110,7 +108,7 @@
                   type: 'success',
                   duration: 1500,
                   onClose: () => {
-                    this.visible = false
+                    this.$refs.dialog.closeDialog()
                     this.$emit('refreshDataList')
                   }
                 })

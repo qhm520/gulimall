@@ -24,16 +24,16 @@
         </el-date-picker>
       </el-form-item>
       <!--查询 和 重置 -->
-      <search-reset :search="query" :reset="reset"></search-reset>
+      <gulimall-search :search="query" :reset="reset"></gulimall-search>
     </el-form>
-    <operation>
+    <gulimall-operation>
       <el-button v-if="isAuth('sys:schedule:save')" type="primary" @click="addOrUpdateHandle()"><icon-svg name="add"/>&nbsp;新增定时任务</el-button>
       <el-button v-if="isAuth('sys:schedule:delete')" type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="delete"/>&nbsp;批量删除</el-button>
       <el-button v-if="isAuth('sys:schedule:pause')" type="info" @click="pauseHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="pause"/>&nbsp;批量暂停</el-button>
       <el-button v-if="isAuth('sys:schedule:resume')" type="warning" @click="resumeHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="resume"/>&nbsp;批量恢复</el-button>
       <el-button v-if="isAuth('sys:schedule:run')" type="danger" @click="runHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="run"/>&nbsp;批量立即执行</el-button>
       <el-button v-if="isAuth('sys:schedule:log')" type="success" @click="logHandle()"><icon-svg name="log"/>&nbsp;日志列表</el-button>
-    </operation>
+    </gulimall-operation>
     <gulimall-table>
       <el-table-column
         type="selection"
@@ -116,8 +116,8 @@
 
 <script>
   import {dateFormat} from '../../filters'
-  import Operation from '../../components/Operation/Operation'
-  import SearchReset from '../../components/Operation/SearchReset'
+  import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
+  import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import ScheduleDialog from "./ScheduleDialog";
   import {mapGetters} from 'vuex'
@@ -136,8 +136,8 @@
       }
     },
     components: {
-      Operation,
-      SearchReset,
+      GulimallOperation,
+      GulimallSearch,
       GulimallTable,
       ScheduleDialog
     },
@@ -182,14 +182,12 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.tableSelectData.map(item => {
+        let ids = id ? [id] : this.tableSelectData.map(item => {
           return item.jobId
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
+        }).then(res => {
           this.$http({
             url: this.$http.adornUrl('/sys/schedule/delete'),
             method: 'post',
@@ -207,19 +205,17 @@
             } else {
               this.$message.error(data.msg)
             }
-          })
-        }).catch(() => {})
+          }).catch(() => {})
+        })
       },
       // 暂停
       pauseHandle (id) {
-        var ids = id ? [id] : this.tableSelectData.map(item => {
+        let ids = id ? [id] : this.tableSelectData.map(item => {
           return item.jobId
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '暂停' : '批量暂停'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '暂停' : '批量暂停'}</span>]操作?`
+        }).then(res => {
           this.$http({
             url: this.$http.adornUrl('/sys/schedule/pause'),
             method: 'post',
@@ -237,18 +233,16 @@
             } else {
               this.$message.error(data.msg)
             }
-          })
-        }).catch(() => {})
+          }).catch(() => {})
+        })
       },
       // 恢复
       resumeHandle (id) {
-        var ids = id ? [id] : this.tableSelectData.map(item => {
+        let ids = id ? [id] : this.tableSelectData.map(item => {
           return item.jobId
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '恢复' : '批量恢复'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">[${id ? '恢复' : '批量恢复'}</span>]操作?`
         }).then(() => {
           this.$http({
             url: this.$http.adornUrl('/sys/schedule/resume'),
@@ -275,10 +269,8 @@
         var ids = id ? [id] : this.tableSelectData.map(item => {
           return item.jobId
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '立即执行' : '批量立即执行'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+        this.$GulimallConfirm({
+          content: `确定对[id=${ids.join(',')}]进行[[<span style="color: red;display:inline;">${id ? '立即执行' : '批量立即执行'}</span>]操作?`
         }).then(() => {
           this.$http({
             url: this.$http.adornUrl('/sys/schedule/run'),

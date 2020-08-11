@@ -1,7 +1,7 @@
 <template>
   <div class="mod-category">
     <div>
-      <operation>
+      <gulimall-operation>
         <el-button-group>
           <el-button type="primary" v-if="draggable" @click="batchSave">
             <icon-svg name="save"/>&nbsp;批量保存
@@ -16,7 +16,7 @@
             <el-switch v-model="draggable" style="height: 14px; margin-top: 1px;" @click.stop.native></el-switch>&nbsp;开启拖拽
           </el-button>
         </el-button-group>
-      </operation>
+      </gulimall-operation>
       <!-- 树 -->
       <div class="custom-tree-container" style="margin-top: 10px;width: 50%; float: left">
         <div class="block">
@@ -76,12 +76,15 @@
 </template>
 
 <script>
-  import Operation from "../../components/Operation/Operation";
+  import GulimallOperation from "../../components/GulimcallOperation/GulimallOperation";
   import GulimallEdit from "../../components/GulimallEdit/GulimallEdit";
 
   export default {
     name: "category",
-    components: {Operation, GulimallEdit},
+    components: {
+      GulimallOperation,
+      GulimallEdit
+    },
     data() {
       return {
         menus: [],

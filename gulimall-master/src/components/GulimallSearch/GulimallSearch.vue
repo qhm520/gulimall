@@ -15,7 +15,7 @@
 
 <script>
   export default {
-    name: 'SearchReset',
+    name: 'GulimallSearch',
     props: {
       search: Function,
       reset: Function
