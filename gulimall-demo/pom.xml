@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.qian</groupId>
-    <artifactId>gulimall-jwt</artifactId>
+    <artifactId>gulimall-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>gulimall-jwt</name>
-    <description>gulimall-jwt</description>
+    <name>gulimall-demo</name>
+    <description>gulimall-demo</description>
 
     <properties>
         <java.version>1.8</java.version>
