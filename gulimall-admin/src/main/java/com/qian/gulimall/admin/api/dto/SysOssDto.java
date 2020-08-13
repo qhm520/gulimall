@@ -1,4 +1,4 @@
-package com.qian.gulimall.admin.api.result;
+package com.qian.gulimall.admin.api.dto;
 
 import lombok.Data;
 
@@ -13,9 +13,9 @@ import java.util.Date;
  * @date 2020-04-19 08:57:20
  */
 @Data
-public class SysOssResult implements Serializable {
+public class SysOssDto implements Serializable {
 
-    private static final long serialVersionUID = 8087613497146124073L;
+    private static final long serialVersionUID = -1587679338865543497L;
     /**
      *
      */
@@ -40,11 +40,6 @@ public class SysOssResult implements Serializable {
      * 上传者IP地址
      */
     private String ip;
-
-    /**
-     * 状态   0：隐藏   1：显示
-     */
-    private Integer status;
 
     /**
      * 备注

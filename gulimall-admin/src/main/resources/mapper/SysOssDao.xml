@@ -6,10 +6,9 @@
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.qian.gulimall.admin.entity.SysOssEntity" id="sysOssMap">
         <result property="id" column="id"/>
-        <result property="urlGroup" column="url_group"/>
-        <result property="urlPath" column="url_path"/>
+        <result property="url" column="url"/>
         <result property="originalFilename" column="original_filename"/>
-        <result property="uploadUserId" column="upload_user_id"/>
+        <result property="uploadUser" column="upload_user"/>
         <result property="ip" column="ip"/>
         <result property="status" column="status"/>
         <result property="remark" column="remark"/>
@@ -39,15 +38,23 @@
     </sql>
 
     <select id="querySysOssPage" parameterType="com.qian.gulimall.admin.api.criteria.SysOssCriteria" resultType="com.qian.gulimall.admin.api.result.SysOssResult">
-        SELECT * FROM (SELECT t.id, CONCAT(t.url_group, t.url_path) AS url, t.original_filename,
-        (SELECT s.username FROM sys_user s WHERE s.user_id = t.upload_user_id) upload_user,
+        SELECT * FROM (SELECT t.id, t.url, t.original_filename, upload_user,
         t.ip,
+        t.status,
         t.create_date FROM sys_oss t
         <where>
             <include refid="query_condition" />
         </where>
         order by t.create_date desc) t
     </select>
+
+    <update id="updateStatusByIds" >
+        update sys_oss set status = #{status,jdbcType=VARCHAR}
+        where id in
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
 
 
 </mapper>

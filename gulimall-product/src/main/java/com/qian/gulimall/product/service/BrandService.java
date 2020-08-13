@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.product.api.criteria.BrandCriteria;
+import com.qian.gulimall.product.api.dto.BrandDto;
 import com.qian.gulimall.product.entity.BrandEntity;
 
 /**
@@ -16,5 +17,9 @@ import com.qian.gulimall.product.entity.BrandEntity;
 public interface BrandService extends IService<BrandEntity> {
 
     PageUtils queryPage(Pageable pageable, BrandCriteria brandCriteria);
+
+    void saveBrand(BrandDto brandDto);
+
+    void updateBrand(BrandDto brandDto);
 }
 

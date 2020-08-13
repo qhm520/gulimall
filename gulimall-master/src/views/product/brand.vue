@@ -1,5 +1,5 @@
 <template>
-  <div class="mod-config">
+  <div class="mod-brand">
     <div>
       <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
         <el-form-item label="品牌名" prop="name">
@@ -61,6 +61,13 @@
           header-align="center"
           align="center"
           label="品牌logo地址">
+          <template slot-scope="scope">
+            <!-- <el-image
+                style="width: 100px; height: 80px"
+                :src="scope.row.logo"
+            fit="fill"></el-image>-->
+            <img :src="scope.row.logo" style="width: 100px; height: 80px" />
+          </template>
         </el-table-column>
         <el-table-column
           prop="descript"
@@ -208,7 +215,7 @@
           content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
         }).then(res=>{
           this.$http({
-            url: this.$http.adornUrl('/sys/config/delete'),
+            url: this.$http.adornUrl('/product/brand/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {

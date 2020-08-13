@@ -31,8 +31,8 @@
         <gulimall-search :search="query" :reset="reset"></gulimall-search>
       </el-form>
       <gulimall-operation>
-        <el-button type="primary" @click="upload">
-          <icon-svg name="oss"/>&nbsp;上传文件
+        <el-button type="primary" @click="refresh">
+          <icon-svg name="oss"/>&nbsp;刷新文件
         </el-button>
         <el-button type="danger" @click="deleteHandle()" :disabled="tableSelectData.length <= 0">
           <icon-svg name="delete"/>&nbsp;批量删除
@@ -77,6 +77,13 @@
           header-align="center"
           align="center"
           label="URL地址">
+          <template slot-scope="scope">
+            <!-- <el-image
+                style="width: 100px; height: 80px"
+                :src="scope.row.logo"
+            fit="fill"></el-image>-->
+            <img :src="scope.row.url" style="width: 100px; height: 80px" />
+          </template>
         </el-table-column>
         <el-table-column
           prop="status"
@@ -84,7 +91,8 @@
           align="center"
           label="状态">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
+            <el-tag v-if="scope.row.status === 0" size="small" type="warning">禁用</el-tag>
+            <el-tag v-else-if="scope.row.status === 2" size="small" type="danger">失效</el-tag>
             <el-tag v-else size="small">正常</el-tag>
           </template>
         </el-table-column>
@@ -197,6 +205,30 @@
       submit () {
         console.log('hello')
       },
+
+      /**
+       * 刷新文件
+       */
+      refresh () {
+        this.$http({
+          url: this.$http.adornUrl('/sys/oss/refresh'),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.$message({
+              message: '刷新文件成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.query('init')
+              }
+            })
+          } else {
+            this.$message.error(data.msg)
+          }
+        })
+      },
       // 删除
       deleteHandle(id) {
         let ids = id ? [id] : this.tableSelectData.map(item => {
@@ -206,13 +238,13 @@
           content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`
       }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/log/delete'),
+            url: this.$http.adornUrl('/sys/oss/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
-                message: '操作成功',
+                message: '删除文件成功',
                 type: 'success',
                 duration: 1500,
                 onClose: () => {

@@ -22,5 +22,6 @@ import java.util.List;
 public interface SysOssDao extends BaseMapper<SysOssEntity> {
 
     public IPage<SysOssResult> querySysOssPage(Page<SysOssCriteria> page, @Param("sysOss") SysOssCriteria sysOssCriteria);
-	
+
+    Integer updateStatusByIds(@Param("status") int status, @Param("list") List<String> list);
 }

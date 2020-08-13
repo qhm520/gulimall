@@ -1,11 +1,13 @@
 package com.qian.gulimall.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 文件上传
@@ -26,14 +28,9 @@ public class SysOssEntity implements Serializable {
 	private Long id;
 
 	/**
-	 * URL地址-分组
+	 * URL地址
 	 */
-	private String urlGroup;
-
-	/**
-	 * URL地址-路径
-	 */
-	private String urlPath;
+	private String url;
 
 	/**
 	 * 原文件名称
@@ -43,7 +40,7 @@ public class SysOssEntity implements Serializable {
 	/**
 	 * 上传者ID
 	 */
-	private Long uploadUserId;
+	private String uploadUser;
 
 	/**
 	 * 上传者IP地址
@@ -63,6 +60,7 @@ public class SysOssEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
+	@TableField(value = "create_date", fill = FieldFill.INSERT)
 	private Date createDate;
 
 }

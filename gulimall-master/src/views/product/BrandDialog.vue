@@ -1,14 +1,26 @@
 <template>
   <gulimall-dialog
     ref="dialog"
-    :title="!dataForm.id ? '新增品牌' : '修改品牌'"
-    :icon="!dataForm.id ? 'add' : 'edit'">
+    :title="!dataForm.brandId ? '新增品牌' : '修改品牌'"
+    :icon="!dataForm.brandId ? 'add' : 'edit'">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="120px">
       <el-form-item label="品牌名" prop="name">
         <el-input v-model="dataForm.name" placeholder="品牌名" clearable></el-input>
       </el-form-item>
       <el-form-item label="品牌logo地址" prop="logo">
-        <el-input v-model="dataForm.logo" placeholder="品牌logo地址" clearable></el-input>
+        <!--<el-input v-model="dataForm.logo" placeholder="品牌logo地址" clearable></el-input>-->
+        <el-upload
+          action="#"
+          :file-list="fileList"
+          :show-file-list="showFileList"
+          list-type="picture"
+          :multiple="false"
+          :limit="1"
+          :http-request="httpRequest"
+          :before-upload="beforeAvatarUpload">
+          <el-button style="background-color: blue; color: white"><icon-svg name="oss"/>&nbsp;点击上传</el-button>
+          <div slot="tip" class="el-upload__tip" style="font-size: 15px; color: red;">只能上传一张jpg/png文件，且不超过10MB</div>
+        </el-upload>
       </el-form-item>
       <el-form-item label="介绍" prop="descript">
         <el-input v-model="dataForm.descript" placeholder="介绍" clearable></el-input>
@@ -35,7 +47,7 @@
 <script>
   import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
   export default {
-    name: 'ConfigDialog',
+    name: 'BrandDialog',
     components: {
       GulimallDialog
     },
@@ -97,22 +109,41 @@
         }
       }
     },
+    computed: {
+      fileList() {
+        return [{
+          name: this.dataForm.name,
+          url: this.dataForm.logo
+        }]
+      },
+      showFileList: {
+        get: function () {
+          return true;
+        },
+        set: function (newValue) {
+        }
+      }
+    },
+
     methods: {
       init (id) {
-        this.dataForm.id = id || 0
+        this.dataForm.brandId = id || 0
         this.$refs.dialog.openDialog()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
-          if (this.dataForm.id) {
+          if (this.dataForm.brandId) {
             this.$http({
-              url: this.$http.adornUrl(`/product/brand/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/product/brand/info/${this.dataForm.brandId}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                // this.dataForm.paramKey = data.sysConfig.paramKey
-                // this.dataForm.paramValue = data.sysConfig.paramValue
-                // this.dataForm.remark = data.sysConfig.remark
+                this.dataForm.name = data.data.name;
+                this.dataForm.logo = data.data.logo;
+                this.dataForm.descript = data.data.descript;
+                this.dataForm.showStatus = data.data.showStatus;
+                this.dataForm.firstLetter = data.data.firstLetter;
+                this.dataForm.sort = data.data.sort;
               }
             })
           }
@@ -122,14 +153,19 @@
       submit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
+            console.log(this.dataForm)
+            const {brandId, name, logo, descript, showStatus, firstLetter, sort} = this.dataForm
             this.$http({
-              url: this.$http.adornUrl(`/product/brand/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/product/brand/${!this.dataForm.brandId ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
-                // 'id': this.dataForm.id || undefined,
-                // 'paramKey': this.dataForm.paramKey,
-                // 'paramValue': this.dataForm.paramValue,
-                // 'remark': this.dataForm.remark
+                brandId: brandId,
+                name: name,
+                logo: logo,
+                descript: descript,
+                showStatus: showStatus,
+                firstLetter: firstLetter,
+                sort: sort
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
@@ -148,7 +184,29 @@
             })
           }
         })
-      }
+      },
+      // 上传之前的格式设置
+      beforeAvatarUpload (file) {
+        debugger
+        const isJPG = file.type === 'image/jpeg'
+        const isLt10M = file.size / 1024 / 1024 < 10
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!')
+        }
+        if (!isLt10M) {
+          this.$message.error('上传头像图片大小不能超过 10MB!')
+        }
+        return isJPG && isLt10M
+      },
+      httpRequest (data) {
+        let _this = this
+        let rd = new FileReader() // 创建文件读取对象
+        let file = data.file
+        rd.readAsDataURL(file) // 文件读取装换为base64类型
+        rd.onloadend = function (e) {
+          _this.dataForm.logo = this.result // this指向当前方法onloadend的作用域
+        }
+      },
     }
   }
 </script>

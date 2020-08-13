@@ -4,14 +4,23 @@ import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.qian.gulimall.admin.api.criteria.SysOssCriteria;
+import com.qian.gulimall.admin.api.dto.SysOssDto;
 import com.qian.gulimall.admin.entity.SysOssEntity;
+import com.qian.gulimall.admin.feign.BrandFeignService;
 import com.qian.gulimall.admin.service.SysOssService;
+import com.qian.gulimall.common.entity.vo.UserDetailsVo;
+import com.qian.gulimall.common.utils.Base64ToMultipart;
+import com.qian.gulimall.common.utils.IPUtils;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,6 +53,12 @@ public class SysOssController {
 
     @Autowired
     private FastFileStorageClient fastFileStorageClient;
+
+    @Value("${fdfs.service}")
+    private String fdfsService;
+
+    @Autowired
+    private BrandFeignService brandFeignService;
 
     /**
      * 列表
@@ -63,8 +79,19 @@ public class SysOssController {
     //@RequiresPermissions("admin:sysoss:info")
     public R info(@PathVariable("id") Long id){
 		SysOssEntity sysOss = sysOssService.getById(id);
+        sysOss.setUrl(fdfsService + "/" + sysOss.getUrl());
+        return R.ok().put("data", sysOss);
+    }
 
-        return R.ok().put("sysOss", sysOss);
+    /**
+     * 信息
+     */
+    @RequestMapping("/url/{id}")
+    //@RequiresPermissions("admin:sysoss:info")
+    public R url(@PathVariable("id") Long id){
+        SysOssEntity sysOss = sysOssService.getById(id);
+        sysOss.setUrl(fdfsService + "/" + sysOss.getUrl());
+        return R.ok().put("data", sysOss.getUrl());
     }
 
     /**
@@ -95,23 +122,60 @@ public class SysOssController {
     @RequestMapping("/delete")
     //@RequiresPermissions("admin:sysoss:delete")
     public R delete(@RequestBody Long[] ids){
-		sysOssService.removeByIds(Arrays.asList(ids));
-
+        // TODO 要查询是否在用，在用不允许删除
+        List<SysOssEntity> sysOssEntityList = sysOssService.listByIds(Arrays.asList(ids));
+        if (!CollectionUtils.isEmpty(sysOssEntityList)) {
+            List<SysOssEntity> collect = sysOssEntityList.stream().filter(item -> item.getStatus() != 2).collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(collect)) {
+                sysOssService.removeByIds(Arrays.asList(ids));
+            } else
+                return R.error("图片正在使用，不允许删除");
+        }
         return R.ok();
+    }
+
+
+    /**
+     * 删除
+     */
+    @RequestMapping("/refresh")
+    //@RequiresPermissions("admin:sysoss:delete")
+    public R refresh(){
+        R r = brandFeignService.queryAllLogo();
+        if (r.getCode() == 0) {
+            List<String> list = (List<String>) r.get("list");
+            Integer num = sysOssService.updateStatusByIds(2, list);
+            return R.ok().put("data", num);
+        }
+        return R.error("没有要刷新数据");
     }
 
     /**
      * 文件上传
      */
-    @RequestMapping("/upload")
-    public String upload(MultipartFile file) throws IOException {
-        String fileName = file.getOriginalFilename();
-        InputStream inputStream = file.getInputStream();
-        long size = file.getSize();
-        StorePath storePath = fastFileStorageClient.uploadFile(inputStream, size, fileName.substring(fileName.lastIndexOf(".") + 1), null);
-        // TODO 保存到数据库
+    @PostMapping("/upload")
+    public R upload(@RequestBody String base64, Authentication authentication, HttpServletRequest request) throws IOException {
+        R r = Base64ToMultipart.base64ToMultipart(base64);
+        if (r.getCode() == 0) {
+            MultipartFile file = (MultipartFile) r.get("multipartFile");
+            String fileName = file.getOriginalFilename();
+            InputStream inputStream = file.getInputStream();
+            long size = file.getSize();
+            StorePath storePath = fastFileStorageClient.uploadFile(inputStream, size, fileName.substring(fileName.lastIndexOf(".") + 1), null);
+            // TODO 保存到数据库
+            String resAccessUrl = getResAccessUrl(storePath);
+            UserDetailsVo userDetailsVo = (UserDetailsVo)authentication.getPrincipal();
+            SysOssDto sysOssDto = new SysOssDto();
+            sysOssDto.setOriginalFilename(fileName);
+            sysOssDto.setUrl(resAccessUrl);
+            sysOssDto.setUploadUser(userDetailsVo.getUsername());
+            sysOssDto.setIp(IPUtils.getIPAddress(request));
+            Long id = sysOssService.saveSysOss(sysOssDto);
 
-        return getResAccessUrl(storePath);
+            return R.ok().put("id", id);
+        }
+
+        return r;
     }
 
     /**
