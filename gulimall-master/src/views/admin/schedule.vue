@@ -32,7 +32,7 @@
       <el-button v-if="isAuth('sys:schedule:pause')" type="info" @click="pauseHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="pause"/>&nbsp;批量暂停</el-button>
       <el-button v-if="isAuth('sys:schedule:resume')" type="warning" @click="resumeHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="resume"/>&nbsp;批量恢复</el-button>
       <el-button v-if="isAuth('sys:schedule:run')" type="danger" @click="runHandle()" :disabled="tableSelectData.length <= 0"><icon-svg name="run"/>&nbsp;批量立即执行</el-button>
-      <el-button v-if="isAuth('sys:schedule:log')" type="success" @click="logHandle()"><icon-svg name="log"/>&nbsp;日志列表</el-button>
+     <!-- <el-button v-if="isAuth('sys:schedule:log')" type="success" @click="logHandle()"><icon-svg name="log"/>&nbsp;日志列表</el-button>-->
     </gulimall-operation>
     <gulimall-table>
       <el-table-column
@@ -94,7 +94,7 @@
         fixed="right"
         header-align="center"
         align="center"
-        width="400"
+        width="420"
         label="操作">
         <template slot-scope="scope">
           <el-button-group>

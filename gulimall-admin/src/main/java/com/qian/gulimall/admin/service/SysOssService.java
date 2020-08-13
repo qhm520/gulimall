@@ -23,5 +23,7 @@ public interface SysOssService extends IService<SysOssEntity> {
     Long saveSysOss(SysOssDto sysOssDto);
 
     Integer updateStatusByIds(Integer stauts, List<String> list);
+
+    void removeFiles(List<SysOssEntity> sysOssEntityList, Long[] ids);
 }
 

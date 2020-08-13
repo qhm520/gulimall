@@ -72,7 +72,7 @@ public class BrandController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:brand:save")
-    public R save(@RequestBody BrandDto brandDto) {
+    public R save(@Valid @RequestBody BrandDto brandDto) {
         R upload = sysOssFeignService.upload(brandDto.getLogo());
         if (upload.getCode() == 0) {
             brandDto.setLogo(String.valueOf(upload.get("id")));

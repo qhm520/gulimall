@@ -4,7 +4,7 @@
       <el-button class="menuName"><icon-svg :name="$route.meta.icon"/>&nbsp;&nbsp;{{$route.name}}</el-button>
     </el-col>
     <el-col :span="20">
-      <el-button-group style="float: right;margin-right: 10px;height: 40px;">
+      <el-button-group style="float: right;margin-right: 10px;height: 40px;margin-top: 2px;">
         <slot></slot>
       </el-button-group>
     </el-col>

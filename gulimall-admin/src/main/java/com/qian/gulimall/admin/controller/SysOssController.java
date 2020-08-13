@@ -127,7 +127,7 @@ public class SysOssController {
         if (!CollectionUtils.isEmpty(sysOssEntityList)) {
             List<SysOssEntity> collect = sysOssEntityList.stream().filter(item -> item.getStatus() != 2).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(collect)) {
-                sysOssService.removeByIds(Arrays.asList(ids));
+                sysOssService.removeFiles(sysOssEntityList, ids);
             } else
                 return R.error("图片正在使用，不允许删除");
         }
@@ -136,7 +136,7 @@ public class SysOssController {
 
 
     /**
-     * 删除
+     * 刷新数据
      */
     @RequestMapping("/refresh")
     //@RequiresPermissions("admin:sysoss:delete")

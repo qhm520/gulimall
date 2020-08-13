@@ -8,18 +8,17 @@
         <el-input v-model="dataForm.name" placeholder="品牌名" clearable></el-input>
       </el-form-item>
       <el-form-item label="品牌logo地址" prop="logo">
-        <!--<el-input v-model="dataForm.logo" placeholder="品牌logo地址" clearable></el-input>-->
         <el-upload
+          class="upload-demo"
           action="#"
+          :http-request="httpRequest"
+          :before-upload="beforeAvatarUpload"
+          :multiple="false"
           :file-list="fileList"
           :show-file-list="showFileList"
-          list-type="picture"
-          :multiple="false"
-          :limit="1"
-          :http-request="httpRequest"
-          :before-upload="beforeAvatarUpload">
-          <el-button style="background-color: blue; color: white"><icon-svg name="oss"/>&nbsp;点击上传</el-button>
-          <div slot="tip" class="el-upload__tip" style="font-size: 15px; color: red;">只能上传一张jpg/png文件，且不超过10MB</div>
+          list-type="picture">
+          <el-button type="primary"><icon-svg name="oss"/>&nbsp;&nbsp;点击上传</el-button>
+          <div slot="tip" class="el-upload__tip" style="font-size: 15px; color: red;"><icon-svg name="warning"/>&nbsp;&nbsp;只能上传一张jpg/png文件，且不超过10MB</div>
         </el-upload>
       </el-form-item>
       <el-form-item label="介绍" prop="descript">
@@ -45,7 +44,7 @@
 </template>
 
 <script>
-  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
+  import GulimallDialog from '../../components/GulimallDialog/GulimallDialog'
   export default {
     name: 'BrandDialog',
     components: {
@@ -118,7 +117,7 @@
       },
       showFileList: {
         get: function () {
-          return true;
+          return this.dataForm.logo != null && this.dataForm.logo != '' && this.dataForm.logo != undefined ;
         },
         set: function (newValue) {
         }
@@ -138,12 +137,13 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.name = data.data.name;
-                this.dataForm.logo = data.data.logo;
-                this.dataForm.descript = data.data.descript;
-                this.dataForm.showStatus = data.data.showStatus;
-                this.dataForm.firstLetter = data.data.firstLetter;
-                this.dataForm.sort = data.data.sort;
+                const {name, logo, descript, showStatus, firstLetter, sort} = data.data
+                this.dataForm.name = name;
+                this.dataForm.logo = logo;
+                this.dataForm.descript = descript;
+                this.dataForm.showStatus = showStatus;
+                this.dataForm.firstLetter = firstLetter;
+                this.dataForm.sort = sort;
               }
             })
           }
@@ -153,7 +153,6 @@
       submit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            console.log(this.dataForm)
             const {brandId, name, logo, descript, showStatus, firstLetter, sort} = this.dataForm
             this.$http({
               url: this.$http.adornUrl(`/product/brand/${!this.dataForm.brandId ? 'save' : 'update'}`),
@@ -187,7 +186,6 @@
       },
       // 上传之前的格式设置
       beforeAvatarUpload (file) {
-        debugger
         const isJPG = file.type === 'image/jpeg'
         const isLt10M = file.size / 1024 / 1024 < 10
         if (!isJPG) {

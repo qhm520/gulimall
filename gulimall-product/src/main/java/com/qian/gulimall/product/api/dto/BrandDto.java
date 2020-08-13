@@ -32,22 +32,27 @@ public class BrandDto implements Serializable {
 	/**
 	 * 品牌logo地址
 	 */
+	@NotBlank(message = "品牌logo地址不能为空")
 	private String logo;
 	/**
 	 * 介绍
 	 */
+	@NotBlank(message = "介绍logo地址不能为空")
 	private String descript;
 	/**
 	 * 显示状态[0-不显示；1-显示]
 	 */
+	@NotBlank(message = "显示状态不能为空")
 	private Integer showStatus;
 	/**
 	 * 检索首字母
 	 */
+	@NotBlank(message = "检索首字母不能为空")
 	private String firstLetter;
 	/**
 	 * 排序
 	 */
+	@NotBlank(message = "排序不能为空")
 	private Integer sort;
 
 }

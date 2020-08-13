@@ -3,6 +3,7 @@ package com.qian.gulimall.admin.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.qian.gulimall.admin.api.criteria.SysOssCriteria;
 import com.qian.gulimall.admin.api.dto.SysOssDto;
 import com.qian.gulimall.admin.api.result.SysOssResult;
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,9 @@ public class SysOssServiceImpl extends ServiceImpl<SysOssDao, SysOssEntity> impl
 
     @Autowired
     private SysOssDao sysOssDao;
+
+    @Autowired
+    private FastFileStorageClient fastFileStorageClient;
 
     /**
      * 分页查询
@@ -68,29 +72,54 @@ public class SysOssServiceImpl extends ServiceImpl<SysOssDao, SysOssEntity> impl
 
         List<SysOssEntity> all = this.baseMapper.selectList(null);
         if (!CollectionUtils.isEmpty(all)) {
-            List<String> collect = all.stream().map(item -> item.getId()+"").collect(Collectors.toList());
+            List<String> collect = all.stream().map(item -> item.getId() + "").collect(Collectors.toList());
             List<String> intersection = collect.stream().filter(item -> !list.contains(item)).collect(Collectors.toList());
 
             // 差集 (list2 - list1)
 //            List<String> reduce2 = list2.stream().filter(item -> !list1.contains(item)).collect(toList());
-
-            return sysOssDao.updateStatusByIds(stauts, intersection);
+            if (!CollectionUtils.isEmpty(intersection)) {
+                return sysOssDao.updateStatusByIds(stauts, intersection);
+            }
         }
         return 0;
     }
 
+    @Override
+    public void removeFiles(List<SysOssEntity> sysOssEntityList, Long[] ids) {
+        // 从文件系统中删除文件
+        if (!CollectionUtils.isEmpty(sysOssEntityList)) {
+            sysOssEntityList.stream().forEach(sysOss -> {
+                String url = sysOss.getUrl();
+                String group = url.substring(0, url.indexOf('/'));
+                String path = url.substring(url.indexOf('/') + 1);
+
+                fastFileStorageClient.deleteFile(group, path);
+            });
+            // 删除表数据
+            this.removeByIds(Arrays.asList(ids));
+        }
+    }
+
     public static void main(String[] args) {
-        List<String> list1 = new ArrayList<String>();
-        list1.add("1");
-        list1.add("2");
+//        List<String> list1 = new ArrayList<String>();
+//        list1.add("1");
+//        list1.add("2");
+//
+//        List<String> list2 = new ArrayList<String>();
+//        list2.add("2");
+//
+//        // 交集
+//        List<String> intersection = list1.stream().filter(item -> !list2.contains(item)).collect(Collectors.toList());
+//        System.out.println("---交集 intersection---");
+//        intersection.parallelStream().forEach(System.out::println);
 
-        List<String> list2 = new ArrayList<String>();
-        list2.add("2");
+        String url = "group1/M00/00/00/qf5zCl8zj3OALRFvAAE_Gm50HCI27.jpeg";
 
-        // 交集
-        List<String> intersection = list1.stream().filter(item -> !list2.contains(item)).collect(Collectors.toList());
-        System.out.println("---交集 intersection---");
-        intersection.parallelStream().forEach(System.out::println);
+        String group = url.substring(0, url.indexOf('/'));
+        String path = url.substring(url.indexOf('/') + 1);
+
+        System.out.println(group);
+        System.out.println(path);
     }
 
 }
