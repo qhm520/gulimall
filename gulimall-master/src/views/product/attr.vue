@@ -1,151 +1,172 @@
 <template>
-  <div class="mod-config">
-    <div>
-      <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
-        <el-form-item label="品牌名" prop="name">
-          <el-input v-model="queryCriteria.name" placeholder="品牌名" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="显示状态" prop="showStatus">
-          <el-select v-model="queryCriteria.showStatus" placeholder="请选择">
-            <el-option
-              v-for="item in statusList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <!--查询 和 重置 -->
-        <gulimall-search :search="query" :reset="reset"></gulimall-search>
-      </el-form>
-      <gulimall-operation>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">
-          <icon-svg name="add"/>
-          &nbsp;新增规格参数
-        </el-button>
-        <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()"
-                   :disabled="tableSelectData.length <= 0">
-          <icon-svg name="delete"/>
-          &nbsp;批量删除
-        </el-button>
-      </gulimall-operation>
-      <gulimall-table>
-        <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50">
-        </el-table-column>
-        <el-table-column
-          label="序号"
-          align="center"
-          width="70px">
-          <template slot-scope="scope">
-            {{scope.$index+1}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="brandId"
-          header-align="center"
-          align="center"
-          label="品牌id">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          header-align="center"
-          align="center"
-          label="品牌名">
-        </el-table-column>
-        <el-table-column
-          prop="logo"
-          header-align="center"
-          align="center"
-          label="品牌logo地址">
-        </el-table-column>
-        <el-table-column
-          prop="descript"
-          header-align="center"
-          align="center"
-          label="介绍">
-        </el-table-column>
-        <el-table-column prop="showStatus" header-align="center" align="center" label="显示状态">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.showStatus"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              :active-value="1"
-              :inactive-value="0"
-              @click.stop.native
-              @change="updateBrandStatus(scope.row)"
-            ></el-switch>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="firstLetter"
-          header-align="center"
-          align="center"
-          label="检索首字母">
-        </el-table-column>
-        <el-table-column
-          prop="sort"
-          header-align="center"
-          align="center"
-          label="排序">
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          header-align="center"
-          align="center"
-          width="180"
-          label="操作">
-          <template slot-scope="scope">
-            <el-button-group>
-              <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.brandId)">
-                <icon-svg name="edit"/>
-                修改
-              </el-button>
-              <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.brandId)">
-                <icon-svg name="delete"/>
-                删除
-              </el-button>
-            </el-button-group>
-          </template>
-        </el-table-column>
-      </gulimall-table>
+  <div class="mod-attr-group">
+    <gulimall-operation>
+    </gulimall-operation>
 
-    </div>
+    <el-row :gutter="20" style="margin-top: 10px;">
+
+      <el-col :span="6">
+        <gulimall-category ref="category" @tree-node-click="treeNodeClick"></gulimall-category>
+      </el-col>
+      <el-col :span="18">
+        <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
+          <el-form-item label="规格参数id" prop="attrGroupId">
+            <el-input v-model="queryCriteria.attrGroupId" placeholder="规格参数id" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="组名" prop="attrGroupName">
+            <el-input v-model="queryCriteria.attrGroupName" placeholder="组名" clearable></el-input>
+          </el-form-item>
+          <!--查询 和 重置 -->
+          <gulimall-search :search="query" :reset="reset">
+            <el-button type="info" @click="queryAll()">
+              <icon-svg name="all"/>
+              &nbsp;查询全部
+            </el-button>
+          </gulimall-search>
+        </el-form>
+        <gulimall-operation :name="attr" icon="attr">
+          <el-button  type="primary" @click="addOrUpdateHandle()">
+            <icon-svg name="add"/>
+            &nbsp;新增规格参数
+          </el-button>
+          <el-button type="danger" @click="deleteHandle()"
+                     :disabled="tableSelectData.length <= 0">
+            <icon-svg name="delete"/>
+            &nbsp;批量删除
+          </el-button>
+        </gulimall-operation>
+        <gulimall-table>
+          <el-table-column
+            type="selection"
+            header-align="center"
+            align="center"
+            width="50">
+          </el-table-column>
+          <el-table-column
+            label="序号"
+            align="center"
+            width="70px">
+            <template slot-scope="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
+         <!-- <el-table-column prop="attrId" header-align="center" align="center" label="id"></el-table-column>
+          <el-table-column prop="attrName" header-align="center" align="center" label="属性名"></el-table-column>
+          <el-table-column
+            v-if="attrtype == 1"
+            prop="searchType"
+            header-align="center"
+            align="center"
+            label="可检索"
+          >
+            <template slot-scope="scope">
+              <i class="el-icon-success" v-if="scope.row.searchType==1"></i>
+              <i class="el-icon-error" v-else></i>
+            </template>
+          </el-table-column>
+          <el-table-column prop="valueType" header-align="center" align="center" label="值类型">
+            <template slot-scope="scope">
+              <el-tag type="success" v-if="scope.row.valueType==0">单选</el-tag>
+              <el-tag v-else>多选</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="icon" header-align="center" align="center" label="图标"></el-table-column>
+          <el-table-column prop="valueSelect" header-align="center" align="center" label="可选值">
+            <template slot-scope="scope">
+              <el-tooltip placement="top">
+                <div slot="content">
+                  <span v-for="(i,index) in scope.row.valueSelect.split(';')" :key="index">{{i}}<br/></span>
+                </div>
+                <el-tag>{{scope.row.valueSelect.split(";")[0]+" ..."}}</el-tag>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column prop="enable" header-align="center" align="center" label="启用">
+            <template slot-scope="scope">
+              <i class="el-icon-success" v-if="scope.row.enable==1"></i>
+              <i class="el-icon-error" v-else></i>
+            </template>
+          </el-table-column>
+          <el-table-column prop="catelogName" header-align="center" align="center" label="所属分类"></el-table-column>
+          <el-table-column
+            v-if="attrtype == 1"
+            prop="groupName"
+            header-align="center"
+            align="center"
+            label="所属规格参数"
+          ></el-table-column>
+          <el-table-column v-if="attrtype == 1" prop="showDesc" header-align="center" align="center" label="快速展示">
+            <template slot-scope="scope">
+              <i class="el-icon-success" v-if="scope.row.showDesc==1"></i>
+              <i class="el-icon-error" v-else></i>
+            </template>
+          </el-table-column>-->
+          <el-table-column
+            fixed="right"
+            header-align="center"
+            align="center"
+            width="180"
+            label="操作">
+            <template slot-scope="scope">
+              <el-button-group>
+                <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.attrGroupId)">
+                  <icon-svg name="edit"/>
+                  &nbsp;修改
+                </el-button>
+                <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.attrGroupId)">
+                  <icon-svg name="delete"/>
+                  &nbsp;删除
+                </el-button>
+              </el-button-group>
+            </template>
+          </el-table-column>
+        </gulimall-table>
+      </el-col>
+    </el-row>
     <!-- 弹窗, 新增 / 修改 -->
-    <attr-dialog v-if="openDialog" ref="attrDialog" @refreshDataList="query"></attr-dialog>
+    <attr-group-dialog v-if="openDialog" ref="attrDialog" @refreshDataList="query"></attr-group-dialog>
+
+    <!-- 弹窗, 关联 -->
+    <attr-relation-dialog v-if="openRelationDialog" ref="attrRelationDialog" @refreshDataList="query"></attr-relation-dialog>
   </div>
 </template>
 
 <script>
-  import AttrDialog from "./AttrDialog";
+  import AttrGroupDialog from "./AttrGroupDialog";
   import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
   import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
+  import GulimallCategory from "../../components/GulimallCategory/GulimallCategory"
+  import AtrrRelationDialog from "./AtrrRelationDialog";
   import {mapGetters} from 'vuex'
+  import AttrRelationDialog from "./AtrrRelationDialog";
 
   export default {
     name: 'attr',
     data() {
       return {
         queryCriteria: {
-          name: '',
-          showStatus: ''
+          catelogId: 0,
+          attrGroupId: '',
+          attrGroupName: ''
         },
-        statusList: [{value: 0, label: '禁用'}, {value: 1, label: '正常'}],  // TODO 以后从字典中获取
-        openDialog: false
+        attrTitle: '规格参数列表',
+        attr: '规格参数列表',
+        openDialog: false,
+        openRelationDialog: false
       }
     },
     components: {
-      AttrDialog,
+      AttrRelationDialog,
+      AttrGroupDialog,
       GulimallOperation,
       GulimallSearch,
-      GulimallTable
+      GulimallTable,
+      GulimallCategory,
+      AtrrRelationDialog
     },
     activated() {
+      this.attr = this.attrTitle + '(' + '全部' + ')'
       this.query('init')
     },
     computed: {
@@ -164,34 +185,38 @@
        */
       query(type) {
         this.$store.dispatch('query', {
-          url: '/product/brand/list',
+          url: '/product/attrgroup/list',
           type: type,
           formData: {
-            'name': this.queryCriteria.name,
-            'show_status': this.queryCriteria.showStatus
+            'catelogId': this.queryCriteria.catelogId,
+            'attrGroupId': this.queryCriteria.attrGroupId,
+            'attrGroupName': this.queryCriteria.attrGroupName
           }
         });
       },
-
-      /**
-       * 更新状态
-       * @param data
-       */
-      updateBrandStatus (data) {
-        let { brandId, showStatus } = data
-        //发送请求修改状态
-        this.$http({
-          url: this.$http.adornUrl("/product/brand/update/status"),
-          method: "post",
-          data: this.$http.adornData({ brandId, showStatus }, false)
-        }).then(({ data }) => {
-          this.$message({
-            type: "success",
-            message: "状态更新成功"
-          });
-        });
+      queryAll() {
+        this.queryCriteria.catelogId = 0
+        this.attr = this.attrTitle + '(' + '全部' + ')'
+        this.query('init')
+      },
+      treeNodeClick (data, node, component) {
+        if (node.level === 3) {
+          const name = node.parent.parent.data.name + '-' + node.parent.data.name + '-' + node.data.name
+          this.attr = this.attrTitle + '(' + name + ')'  // 列表名称
+          this.queryCriteria.catelogId = data.catId
+          this.$refs.queryCriteria.resetFields()
+          this.query('init'); //重新查询
+        }
       },
 
+
+      // 关联
+      relationHandle (id) {
+        this.openRelationDialog = true
+        this.$nextTick(() => {
+          this.$refs.attrRelationDialog.init(id)
+        })
+      },
       // 新增 / 修改
       addOrUpdateHandle(id) {
         this.openDialog = true
@@ -202,7 +227,7 @@
       // 删除
       deleteHandle(id) {
         let ids = id ? [id] : this.tableSelectData.map(item => {
-          return item.brandId
+          return item.attrGroupId
         })
         this.$GulimallConfirm({
           content: `确定对[id=${ids.join(',')}]进行[<span style="color: red;display:inline;">${id ? '删除' : '批量删除'}</span>]操作?`

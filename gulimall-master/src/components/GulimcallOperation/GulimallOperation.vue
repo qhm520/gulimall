@@ -1,7 +1,7 @@
 <template>
   <el-row style="background-color: #2D64B3">
     <el-col :span="4">
-      <el-button class="menuName"><icon-svg :name="$route.meta.icon"/>&nbsp;&nbsp;{{$route.name}}</el-button>
+      <el-button class="menuName"><icon-svg :name="icon ? icon : $route.meta.icon"/>&nbsp;&nbsp;{{name ? name : $route.name}}</el-button>
     </el-col>
     <el-col :span="20">
       <el-button-group style="float: right;margin-right: 10px;height: 40px;margin-top: 2px;">
@@ -14,6 +14,10 @@
 <script>
   export default {
     name: 'Operation',
+    props: {
+      icon: String,
+      name: String
+    }
   }
 </script>
 

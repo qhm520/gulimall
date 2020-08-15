@@ -12,6 +12,7 @@ import { isAuth } from '@/utils'
 import './filters' // 加载过滤器
 import cloneDeep from 'lodash/cloneDeep'
 import gulimallConfirm from './utils/gulimallConfirm'
+import PubSub from 'pubsub-js'
 
 Vue.use(VueCookie)
 Vue.use(gulimallConfirm)
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV !== 'production') {
 // 挂载全局
 Vue.prototype.$http = httpRequest // ajax请求方法
 Vue.prototype.isAuth = isAuth     // 权限方法
+Vue.prototype.PubSub = PubSub   // 组件发布订阅消息
 
 // 保存整站vuex本地储存初始状态
 window.SITE_CONFIG['storeState'] = cloneDeep(store.state)

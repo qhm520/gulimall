@@ -1,6 +1,7 @@
 <template>
   <el-form-item style="float: right">
     <el-button-group>
+      <slot></slot>
       <el-button class="blue-background" @click="search">
         <icon-svg name="search"/>
         &nbsp;查询

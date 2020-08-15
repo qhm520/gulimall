@@ -1,9 +1,10 @@
 <template>
   <gulimall-dialog
     ref="dialog"
+    @submit="submit"
     :title="!dataForm.id ? '新增角色' : '修改角色'"
     :icon="!dataForm.id ? 'add' : 'edit'">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="80px">
       <el-form-item label="角色名称" prop="roleName">
         <el-input v-model="dataForm.roleName" placeholder="角色名称"></el-input>
       </el-form-item>
@@ -89,7 +90,7 @@
         })
       },
       // 表单提交
-      dataFormSubmit () {
+      submit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({

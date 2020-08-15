@@ -1,6 +1,7 @@
 <template>
   <gulimall-dialog
     ref="dialog"
+    @submit="submit"
     :title="!dataForm.id ? '新增菜单' : '修改菜单'"
     :icon="!dataForm.id ? 'add' : 'edit'">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="80px">
@@ -31,10 +32,10 @@
         <el-input v-model="dataForm.parentName" v-popover:menuListPopover :readonly="true" placeholder="点击选择上级菜单" class="menu-list__input"></el-input>
       </el-form-item>
       <el-form-item v-if="dataForm.type === 1" label="菜单路由" prop="url">
-        <el-input v-model="dataForm.url" placeholder="菜单路由"></el-input>
+        <el-input v-model="dataForm.url" placeholder="菜单路由" clearable></el-input>
       </el-form-item>
       <el-form-item v-if="dataForm.type !== 0" label="授权标识" prop="perms">
-        <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔, 如: user:list,user:create"></el-input>
+        <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔, 如: user:list,user:create" clearable></el-input>
       </el-form-item>
       <el-form-item v-if="dataForm.type !== 2" label="排序号" prop="orderNum">
         <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="0" label="排序号"></el-input-number>

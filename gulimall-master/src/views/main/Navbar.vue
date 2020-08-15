@@ -74,7 +74,7 @@
     data() {
       return {
         updatePassowrdVisible: false,
-        title: '谷粒商城',
+        title: '钱多多商城',
         logo: '../static/img/guli.png',
         alert: 1000
       }

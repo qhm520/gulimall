@@ -8,6 +8,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Created by IntelliJ IDEA.
+ * BASE64DecodedMultipartFile is base64转成MultipartFile
+ *
+ * @author QIAN
+ * Date 2020/08/15
+ * Time 14:30
+ */
 public class BASE64DecodedMultipartFile implements MultipartFile {
 
     private final byte[] imgContent;

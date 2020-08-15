@@ -1,7 +1,7 @@
 {
   "name": "gulimall-master",
   "version": "1.2.2",
-  "description": "谷粒商城",
+  "description": "钱多多商城",
   "author": "QIAN",
   "private": true,
   "scripts": {
@@ -27,6 +27,7 @@
     "lodash": "4.17.5",
     "node-sass": "4.9.0",
     "npm": "^6.9.0",
+    "pubsub-js": "^1.8.0",
     "sass-loader": "6.0.6",
     "svg-sprite-loader": "3.7.3",
     "vue": "2.5.16",

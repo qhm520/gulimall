@@ -27,7 +27,7 @@ public class RSATest {
 		//私钥
 		String priKey = "MIICeQIBADANBgkqhkiG9w0BAQEFAASCAmMwggJfAgEAAoGBAMPb45L2/ifTexwe7JUwHIMX0ydmgh+WjJlbC1bbQV4KFG/pMD1Cb1rhA1qZHJacBRF7qfDXkSGS/aWsVf0tOpltY0IIWvkHcIp7PmqqYuUdwoSSuTNp+2sxRotMGLFAlwa9etr4FZM2S1YdwtFS1Hd6W0VXh2T3O0/CAOTr8cD7AgMBAAECgYEAmnGnx/kqu38BYlBkYNRad2lvIW+tBnmyDzADBg/JQP2T1he86WGc673p5iQ8resD+CBbBscF88K0b1MxT3696GNDalCWKJLb2gJhABL0dypFFKARny7wIFmtBS6JdMiJbihioXcaOueR+5tjstQbRc3fwnd1GA2LH+Rnv5YBG7kCQQDn64UbKTqcf61dz3fDQcA3qxqs2QAJWE15yQIAWtiUmjlQTWxdBBmZkBW3BIiR87YzSjZZIaduKwF7tRKjCtrNAkEA2DHb3fgpZtocu8/H2dD6gHN83+pR3AlCULradrYd+TgKLxlrhqBDn5IJSP140dlCs3g7TFSc8TBMnMx3yaOa5wJBAMbW8gdIgPz+pqhAoYDiFahk5fj+D/7zG3Hn+fRN71TxKWSFDPxu8HftxgBlPaZNGpC89v3SUdetvZbPt4vcWZ0CQQC/iTyvpQKZGrfGNMlsUlb8olSJ1ID9nj5gY4rVDXf0qg9rtuuqdCY1Ix6Sye3WjNMpSWXPtE7u58mYSRX/ULEVAkEA3ZAcDu3wEAQYRgU2uuziktiy/YZNhQbDfj3EYPpExGqvWFOObzpyVecTqO45AYd2rbPDNuH8+EfMU2nhBY4ijg==";
 //
-		String [] plainTexts = {"jdbc:oracle:thin:@10.79.8.227:1521:lps"};
+		String [] plainTexts = {"jdbc:oracle:thin:@10.79.8.227:1521:orcl"};
 		for (String plainText : plainTexts) {
 			String cipherText = null;
 			// 2、利用私钥对明文数据进行加密

@@ -1,6 +1,7 @@
 <template>
   <gulimall-dialog
     ref="dialog"
+    @submit="submit"
     :title="!dataForm.brandId ? '新增品牌' : '修改品牌'"
     :icon="!dataForm.brandId ? 'add' : 'edit'">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="120px">
@@ -186,7 +187,7 @@
       },
       // 上传之前的格式设置
       beforeAvatarUpload (file) {
-        const isJPG = file.type === 'image/jpeg'
+        const isJPG = file.type === 'image/jpeg' || 'image/png'
         const isLt10M = file.size / 1024 / 1024 < 10
         if (!isJPG) {
           this.$message.error('上传头像图片只能是 JPG 格式!')

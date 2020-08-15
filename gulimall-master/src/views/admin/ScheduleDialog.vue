@@ -1,6 +1,7 @@
 <template>
   <gulimall-dialog
     ref="dialog"
+    @submit="submit"
     :title="!dataForm.id ? '新增定时任务' : '修改定时任务'"
     :icon="!dataForm.id ? 'add' : 'edit'">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="100px">

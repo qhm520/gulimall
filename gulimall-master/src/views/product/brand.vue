@@ -104,10 +104,14 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="180"
+          width="270"
           label="操作">
           <template slot-scope="scope">
             <el-button-group>
+              <el-button type="primary" size="small" @click.stop="relationHandle(scope.row.brandId)">
+                <icon-svg name="relation"/>
+                &nbsp;关联分类
+              </el-button>
               <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.brandId)">
                 <icon-svg name="edit"/>
                 修改
@@ -124,6 +128,8 @@
     </div>
     <!-- 弹窗, 新增 / 修改 -->
     <brand-dialog v-if="openDialog" ref="brandDialog" @refreshDataList="query"></brand-dialog>
+
+    <category-brand-relation-dialog v-if="openCategoryBrandRelationDialog" ref="categoryBrandRelationDialog"></category-brand-relation-dialog>
   </div>
 </template>
 
@@ -132,6 +138,7 @@
   import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
   import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
+  import CategoryBrandRelationDialog from "./CategoryBrandRelationDialog";
   import {mapGetters} from 'vuex'
 
   export default {
@@ -143,14 +150,16 @@
           showStatus: ''
         },
         statusList: [{value: 0, label: '禁用'}, {value: 1, label: '正常'}],  // TODO 以后从字典中获取
-        openDialog: false
+        openDialog: false,
+        openCategoryBrandRelationDialog: false
       }
     },
     components: {
       BrandDialog,
       GulimallOperation,
       GulimallSearch,
-      GulimallTable
+      GulimallTable,
+      CategoryBrandRelationDialog
     },
     activated() {
       this.query('init')
@@ -164,6 +173,9 @@
        */
       reset() {
         this.$refs.queryCriteria.resetFields()
+        this.$nextTick(() => {
+          this.$refs.brandDialog.init(id)
+        })
       },
       /**
        * 查询列表数据
@@ -175,7 +187,7 @@
           type: type,
           formData: {
             'name': this.queryCriteria.name,
-            'show_status': this.queryCriteria.showStatus
+            'showStatus': this.queryCriteria.showStatus
           }
         });
       },
@@ -198,7 +210,13 @@
           });
         });
       },
-
+      // 关联分类
+      relationHandle(id) {
+        this.openCategoryBrandRelationDialog = true
+        this.$nextTick(() => {
+          this.$refs.categoryBrandRelationDialog.operationCategoryBrandRelation(id)
+        })
+      },
       // 新增 / 修改
       addOrUpdateHandle(id) {
         this.openDialog = true

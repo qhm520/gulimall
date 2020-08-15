@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.R;
+import com.qian.gulimall.product.api.criteria.AttrGroupCriteria;
 import com.qian.gulimall.product.entity.AttrGroupEntity;
 
 import java.util.Map;
@@ -17,5 +18,6 @@ import java.util.Map;
  */
 public interface AttrGroupService extends IService<AttrGroupEntity> {
 
+    PageUtils queryPage(Pageable pageable, AttrGroupCriteria attrGroupCriteria);
 }
 

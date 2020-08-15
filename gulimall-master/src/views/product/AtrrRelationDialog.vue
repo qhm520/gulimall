@@ -1,10 +1,9 @@
 <template>
   <gulimall-dialog
     ref="dialog"
-    @beforeClose="beforeClose"
     @submit="submit"
-    :title="!dataForm.attrGroupId ? '新增分组' : '修改分组'"
-    :icon="!dataForm.attrGroupId ? 'add' : 'edit'">
+    title="关联分类"
+    icon="relation">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="120px">
       <el-form-item label="组名" prop="attrGroupName">
         <el-input v-model="dataForm.attrGroupName" placeholder="组名"></el-input>
@@ -32,7 +31,7 @@
   import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
   import CategoryCascader from "../../components/GulimallCategory/CategoryCascader";
   export default {
-    name: 'AttrGroupDialog',
+    name: 'AttrRelationDialog',
     components: {
       GulimallDialog,
       CategoryCascader
@@ -123,7 +122,7 @@
                   type: "success",
                   duration: 1500,
                   onClose: () => {
-                    this.$refs.dialog.closeDialog()
+                    this.visible = false;
                     this.$emit("refreshDataList");
                   }
                 });
@@ -133,9 +132,6 @@
             });
           }
         })
-      },
-      beforeClose() {
-        this.catelogPath = []
       }
     }
   }

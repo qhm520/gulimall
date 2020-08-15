@@ -15,9 +15,11 @@ import com.qian.gulimall.product.dao.BrandDao;
 import com.qian.gulimall.product.entity.BrandEntity;
 import com.qian.gulimall.product.feign.SysOssFeignService;
 import com.qian.gulimall.product.service.BrandService;
+import com.qian.gulimall.product.service.CategoryBrandRelationService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -29,6 +31,9 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
 
     @Autowired
     private SysOssFeignService sysOssFeignService;
+
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Pageable pageable, BrandCriteria brandCriteria) {
@@ -68,9 +73,17 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
         this.baseMapper.insert(brandEntity);
     }
 
+    @Transactional
     @Override
     public void updateBrand(BrandDto brandDto) {
         BrandEntity brandEntity = BeanKit.convertBean(BrandEntity.class, brandDto);
         this.baseMapper.updateById(brandEntity);
+
+        if(!StringUtils.isEmpty(brandEntity.getName())){
+            //同步更新其他关联表中的数据
+            categoryBrandRelationService.updateBrand(brandEntity.getBrandId(),brandEntity.getName());
+
+            //TODO 更新其他关联
+        }
     }
 }

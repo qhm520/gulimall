@@ -8,6 +8,8 @@ import java.util.Date;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * 品牌
@@ -42,7 +44,7 @@ public class BrandDto implements Serializable {
 	/**
 	 * 显示状态[0-不显示；1-显示]
 	 */
-	@NotBlank(message = "显示状态不能为空")
+	@NotNull(message = "显示状态不能为空")
 	private Integer showStatus;
 	/**
 	 * 检索首字母
@@ -52,7 +54,7 @@ public class BrandDto implements Serializable {
 	/**
 	 * 排序
 	 */
-	@NotBlank(message = "排序不能为空")
+	@NotNull(message = "排序不能为空")
 	private Integer sort;
 
 }
