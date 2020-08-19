@@ -1,9 +1,20 @@
 <template>
   <div class="mod-attr-group">
     <gulimall-operation>
+      <el-button-group>
+        <el-button type="warning"  v-if="showRelation" @click="showRelation = !showRelation">
+          <icon-svg name="show"/>&nbsp;显示属性分组
+        </el-button>
+        <!--<el-button type="info" v-if="showRelation" @click="showRelation=!showRelation">
+          <el-switch v-model="showRelation" style="height: 14px; margin-top: 1px;" @click.stop.native></el-switch>&nbsp;显示属性分组
+        </el-button>
+        <el-button type="warning" v-else @click="showRelation=!showRelation">
+          <el-switch v-model="showRelation" style="height: 14px; margin-top: 1px;" @click.stop.native></el-switch>&nbsp;显示关联属性
+        </el-button>-->
+      </el-button-group>
     </gulimall-operation>
 
-    <el-row :gutter="20" style="margin-top: 10px;">
+    <el-row v-show="!showRelation" :gutter="20" style="margin-top: 10px;">
 
       <el-col :span="6">
         <gulimall-category ref="category" @tree-node-click="treeNodeClick"></gulimall-category>
@@ -86,7 +97,7 @@
     <attr-group-dialog v-if="openDialog" ref="attrDialog" @refreshDataList="query"></attr-group-dialog>
 
     <!-- 弹窗, 关联 -->
-    <attr-relation-dialog v-if="openRelationDialog" ref="attrRelationDialog" @refreshDataList="query"></attr-relation-dialog>
+    <attr-relation v-if="showRelation" ref="attrRelation"></attr-relation>
   </div>
 </template>
 
@@ -96,9 +107,8 @@
   import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import GulimallCategory from "../../components/GulimallCategory/GulimallCategory"
-  import AtrrRelationDialog from "./AtrrRelationDialog";
+  import AttrRelation from "./AttrRelation";
   import {mapGetters} from 'vuex'
-  import AttrRelationDialog from "./AtrrRelationDialog";
 
   export default {
     name: 'attr',
@@ -112,17 +122,16 @@
         attrTitle: '分组列表',
         attr: '分组列表',
         openDialog: false,
-        openRelationDialog: false
+        showRelation: false
       }
     },
     components: {
-      AttrRelationDialog,
       AttrGroupDialog,
       GulimallOperation,
       GulimallSearch,
       GulimallTable,
       GulimallCategory,
-      AtrrRelationDialog
+      AttrRelation
     },
     activated() {
       this.attr = this.attrTitle + '(' + '全部' + ')'
@@ -170,10 +179,10 @@
 
 
       // 关联
-      relationHandle (id) {
-        this.openRelationDialog = true
+      relationHandle (attrGroupId) {
+        this.showRelation = true
         this.$nextTick(() => {
-          this.$refs.attrRelationDialog.init(id)
+          this.$refs.attrRelation.init(attrGroupId)
         })
       },
       // 新增 / 修改

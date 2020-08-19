@@ -29,4 +29,13 @@ public class AttrGroupCriteria implements Serializable {
      */
     private Long catelogId;
 
+    /**
+     * 属性id
+     */
+    private Long attrId;
+    /**
+     * 属性名
+     */
+    private String attrName;
+
 }

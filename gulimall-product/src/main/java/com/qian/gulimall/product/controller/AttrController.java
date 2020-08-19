@@ -4,6 +4,8 @@ import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.R;
 import com.qian.gulimall.product.api.criteria.AttrCriteria;
+import com.qian.gulimall.product.api.dto.AttrDto;
+import com.qian.gulimall.product.api.result.AttrResult;
 import com.qian.gulimall.product.entity.AttrEntity;
 import com.qian.gulimall.product.service.AttrService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +48,9 @@ public class AttrController {
     @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:attr:info")
     public R info(@PathVariable("attrId") Long attrId) {
-        AttrEntity attr = attrService.getById(attrId);
+        AttrResult attrResult = attrService.getAttrInfo(attrId);
 
-        return R.ok().put("attr", attr);
+        return R.ok().put("attr", attrResult);
     }
 
     /**
@@ -56,8 +58,8 @@ public class AttrController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:attr:save")
-    public R save(@RequestBody AttrEntity attr) {
-        attrService.save(attr);
+    public R save(@RequestBody AttrDto attrDto) {
+        attrService.saveAttr(attrDto);
 
         return R.ok();
     }
@@ -67,8 +69,8 @@ public class AttrController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:attr:update")
-    public R update(@RequestBody AttrEntity attr) {
-        attrService.updateById(attr);
+    public R update(@RequestBody AttrDto attrDto) {
+        attrService.updateAttr(attrDto);
 
         return R.ok();
     }

@@ -20,6 +20,7 @@
           type="text"
           tabindex="1"
           autocomplete="on"
+          clearable
         />
       </el-form-item>
 
@@ -39,6 +40,7 @@
           @keyup.native="checkCapslock"
           @blur="capsTooltip = false"
           @keyup.enter.native="handleLogin"
+          clearable
         />
         <span class="show-pwd" @click="showPwd">
           <icon-svg :name="passwordType === 'password' ? 'eye' : 'eye-open'"
@@ -60,6 +62,7 @@
               type="text"
               tabindex="3"
               autocomplete="on"
+              clearable
             />
           </el-col>
           <el-col :span="6" class="login-imageCode">

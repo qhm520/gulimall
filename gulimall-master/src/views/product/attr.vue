@@ -10,11 +10,8 @@
       </el-col>
       <el-col :span="18">
         <el-form ref="queryCriteria" :inline="true" :model="queryCriteria" @keyup.enter.native="query()">
-          <el-form-item label="规格参数id" prop="attrGroupId">
-            <el-input v-model="queryCriteria.attrGroupId" placeholder="规格参数id" clearable></el-input>
-          </el-form-item>
-          <el-form-item label="组名" prop="attrGroupName">
-            <el-input v-model="queryCriteria.attrGroupName" placeholder="组名" clearable></el-input>
+          <el-form-item label="属性名" prop="attrName">
+            <el-input v-model="queryCriteria.attrName" placeholder="属性名" clearable></el-input>
           </el-form-item>
           <!--查询 和 重置 -->
           <gulimall-search :search="query" :reset="reset">
@@ -27,7 +24,7 @@
         <gulimall-operation :name="attr" icon="attr">
           <el-button  type="primary" @click="addOrUpdateHandle()">
             <icon-svg name="add"/>
-            &nbsp;新增规格参数
+            &nbsp;{{attrType == 1 ? '新增规格参数' : '新增销售属性'}}
           </el-button>
           <el-button type="danger" @click="deleteHandle()"
                      :disabled="tableSelectData.length <= 0">
@@ -50,10 +47,10 @@
               {{scope.$index+1}}
             </template>
           </el-table-column>
-         <!-- <el-table-column prop="attrId" header-align="center" align="center" label="id"></el-table-column>
+          <el-table-column prop="attrId" header-align="center" align="center" label="id"></el-table-column>
           <el-table-column prop="attrName" header-align="center" align="center" label="属性名"></el-table-column>
           <el-table-column
-            v-if="attrtype == 1"
+            v-if="attrType == 1"
             prop="searchType"
             header-align="center"
             align="center"
@@ -66,7 +63,7 @@
           </el-table-column>
           <el-table-column prop="valueType" header-align="center" align="center" label="值类型">
             <template slot-scope="scope">
-              <el-tag type="success" v-if="scope.row.valueType==0">单选</el-tag>
+              <el-tag type="success" v-if=" scope.row.valueType === 0">单选</el-tag>
               <el-tag v-else>多选</el-tag>
             </template>
           </el-table-column>
@@ -89,18 +86,18 @@
           </el-table-column>
           <el-table-column prop="catelogName" header-align="center" align="center" label="所属分类"></el-table-column>
           <el-table-column
-            v-if="attrtype == 1"
+            v-if="attrType == 1"
             prop="groupName"
             header-align="center"
             align="center"
             label="所属规格参数"
           ></el-table-column>
-          <el-table-column v-if="attrtype == 1" prop="showDesc" header-align="center" align="center" label="快速展示">
+          <el-table-column v-if="attrType == 1" prop="showDesc" header-align="center" align="center" label="快速展示">
             <template slot-scope="scope">
               <i class="el-icon-success" v-if="scope.row.showDesc==1"></i>
               <i class="el-icon-error" v-else></i>
             </template>
-          </el-table-column>-->
+          </el-table-column>
           <el-table-column
             fixed="right"
             header-align="center"
@@ -109,11 +106,11 @@
             label="操作">
             <template slot-scope="scope">
               <el-button-group>
-                <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.attrGroupId)">
+                <el-button type="warning" size="small" @click.stop="addOrUpdateHandle(scope.row.attrId)">
                   <icon-svg name="edit"/>
                   &nbsp;修改
                 </el-button>
-                <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.attrGroupId)">
+                <el-button type="danger" size="small" @click.stop="deleteHandle(scope.row.attrId)">
                   <icon-svg name="delete"/>
                   &nbsp;删除
                 </el-button>
@@ -124,7 +121,9 @@
       </el-col>
     </el-row>
     <!-- 弹窗, 新增 / 修改 -->
-    <attr-group-dialog v-if="openDialog" ref="attrDialog" @refreshDataList="query"></attr-group-dialog>
+    <attr-dialog v-if="openDialog" ref="attrDialog"
+                 :type="attrType"
+                 @refreshDataList="query"></attr-dialog>
 
     <!-- 弹窗, 关联 -->
     <attr-relation-dialog v-if="openRelationDialog" ref="attrRelationDialog" @refreshDataList="query"></attr-relation-dialog>
@@ -132,33 +131,40 @@
 </template>
 
 <script>
-  import AttrGroupDialog from "./AttrGroupDialog";
+  import AttrDialog from "./AttrDialog";
   import GulimallOperation from '../../components/GulimcallOperation/GulimallOperation'
   import GulimallSearch from '../../components/GulimallSearch/GulimallSearch'
   import GulimallTable from '../../components/GulimallTable/GulimallTable'
   import GulimallCategory from "../../components/GulimallCategory/GulimallCategory"
-  import AtrrRelationDialog from "./AtrrRelationDialog";
+  import AtrrRelationDialog from "./AttrRelation";
   import {mapGetters} from 'vuex'
-  import AttrRelationDialog from "./AtrrRelationDialog";
+  import AttrRelationDialog from "./AttrRelation";
 
   export default {
     name: 'attr',
+    props: {
+      attrType: {
+        type: Number,
+        default: 1
+      }
+    },
     data() {
       return {
+        catId: 0,
+        type: 1,
         queryCriteria: {
           catelogId: 0,
-          attrGroupId: '',
-          attrGroupName: ''
+          attrName: ''
         },
-        attrTitle: '规格参数列表',
-        attr: '规格参数列表',
+        attrTitle: this.attrType === 1 ? '规格参数列表' : '销售属性列表',
+        attr: this.attrType === 1 ? '规格参数列表' : '销售属性列表',
         openDialog: false,
         openRelationDialog: false
       }
     },
     components: {
       AttrRelationDialog,
-      AttrGroupDialog,
+      AttrDialog,
       GulimallOperation,
       GulimallSearch,
       GulimallTable,
@@ -166,8 +172,11 @@
       AtrrRelationDialog
     },
     activated() {
-      this.attr = this.attrTitle + '(' + '全部' + ')'
-      this.query('init')
+      this.$nextTick(() => {
+        this.attr = this.attrTitle + '(' + '全部' + ')'
+        console.log(this.attr)
+        this.query('init')
+      })
     },
     computed: {
       ...mapGetters({tableSelectData: 'tableSelectData'})
@@ -185,12 +194,12 @@
        */
       query(type) {
         this.$store.dispatch('query', {
-          url: '/product/attrgroup/list',
+          url: '/product/attr/list',
           type: type,
           formData: {
             'catelogId': this.queryCriteria.catelogId,
-            'attrGroupId': this.queryCriteria.attrGroupId,
-            'attrGroupName': this.queryCriteria.attrGroupName
+            'attrType': this.attrType,
+            'attrName': this.queryCriteria.attrName
           }
         });
       },
@@ -208,7 +217,6 @@
           this.query('init'); //重新查询
         }
       },
-
 
       // 关联
       relationHandle (id) {

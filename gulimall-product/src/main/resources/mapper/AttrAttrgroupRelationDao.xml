@@ -11,5 +11,27 @@
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
 
+    <!-- 查询条件 -->
+    <sql id="query_condition">
+        <if test="group.attrId != null">
+            and attr_id = #{group.attrId, jdbcType=BIGINT}
+        </if>
 
+        <if test="group.attrName != null and group.attrName != '' ">
+            and attr_name = #{group.attrName, jdbcType=VARCHAR}
+        </if>
+    </sql>
+    <delete id="deleteRelationBatch">
+        delete from pms_attr_attrgroup_relation where
+        <foreach item="item" collection="list" separator=" OR ">
+            attr_id = #{item.attrId, jdbcType=BIGINT}
+            and
+            attr_group_id = #{item.attrGroupId, jdbcType=BIGINT}
+        </foreach>
+    </delete>
+
+    <select id="queryAttrRelationPage" parameterType="com.qian.gulimall.product.api.criteria.AttrGroupCriteria" resultType="com.qian.gulimall.product.api.result.AttrResult">
+        select * from pms_attr where attr_id in (select attr_id from pms_attr_attrgroup_relation where attr_group_id = #{group.attrGroupId, jdbcType=BIGINT})
+        <include refid="query_condition" />
+    </select>
 </mapper>

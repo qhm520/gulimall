@@ -366,4 +366,83 @@ img {
 .blue-background {
   background-color: #409EFF;
   color: white;
+  border: 1px solid white;
+}
+.blue-background:hover {
+  background-color: lawngreen;
+  color: white;
+  border: 1px solid white;
+}
+.blue-background:focus {
+  background-color: lawngreen;
+  color: white;
+
+  border: 1px solid white;
+}
+
+.purple-background {
+  background-color: #6739b6;
+  color: white;
+  border: 1px solid #6739b6;
+}
+.purple-background:focus {
+  background-color: #6739b6;
+  color: white;
+  border: 1px solid #6739b6;
+}
+.purple-background:hover {
+  background-color: #6739b6;
+  color: white;
+  border: 1px solid #6739b6;
+}
+
+.brown-background {
+  background-color: #a5673f;
+  color: white;
+  border: 1px solid #a5673f;
+}
+.brown-background:focus {
+  background-color: #a5673f;
+  color: white;
+  border: 1px solid #a5673f;
+}
+.brown-background:hover {
+  background-color: #a5673f;
+  color: white;
+  border: 1px solid #a5673f;
+}
+
+
+.pink-background {
+  background-color: #e03997;
+  color: white;
+  border: 1px solid #e03997;
+}
+.pink-background:focus {
+  background-color: #e03997;
+  color: white;
+  border: 1px solid #e03997;
+}
+.pink-background:hover {
+  background-color: #e03997;
+  color: white;
+  border: 1px solid #e03997;
+}
+
+.mauve-background {
+  background-color: #9c26b0;
+  color: white;
+  border: 1px solid #9c26b0;
+}
+
+.mauve-background:focus {
+  background-color: lawngreen;
+  color: white;
+  border: 1px solid #9c26b0;
+}
+
+.mauve-background:hover {
+  background-color: lawngreen;
+  color: white;
+  border: 1px solid #9c26b0;
 }

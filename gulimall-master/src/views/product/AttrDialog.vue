@@ -1,116 +1,242 @@
 <template>
   <gulimall-dialog
     ref="dialog"
-    :title="!dataForm.id ? '新增规格参数' : '修改规格参数'"
-    :icon="!dataForm.id ? 'add' : 'edit'">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()" label-width="120px">
-      <el-form-item label="品牌名" prop="name">
-        <el-input v-model="dataForm.name" placeholder="品牌名" clearable></el-input>
+    :title="title"
+    :icon="!dataForm.attrId ? 'add' : 'edit'"
+    @submit="submit">
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="120px">
+      <!--       @keyup.enter.native="dataFormSubmit()" -->
+      <el-form-item label="属性名" prop="attrName">
+        <el-input v-model="dataForm.attrName" placeholder="属性名"></el-input>
       </el-form-item>
-      <el-form-item label="品牌logo地址" prop="logo">
-        <el-input v-model="dataForm.logo" placeholder="品牌logo地址" clearable></el-input>
+      <el-form-item label="属性类型" prop="attrType">
+        <el-select v-model="dataForm.attrType" placeholder="请选择">
+          <el-option label="规格参数" :value="1"></el-option>
+          <el-option label="销售属性" :value="0"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="介绍" prop="descript">
-        <el-input v-model="dataForm.descript" placeholder="介绍" clearable></el-input>
-      </el-form-item>
-      <el-form-item label="显示状态" prop="showStatus">
+
+      <el-form-item label="值类型" prop="valueType">
         <el-switch
-          v-model="dataForm.showStatus"
+          v-model="dataForm.valueType"
+          active-text="允许多个值"
+          inactive-text="只能单个值"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :inactive-value="0"
+          :active-value="1"
+        ></el-switch>
+      </el-form-item>
+      <el-form-item label="可选值" prop="valueSelect">
+        <!-- <el-input v-model="dataForm.valueSelect"></el-input> -->
+        <el-select
+          v-model="dataForm.valueSelect"
+          multiple
+          filterable
+          allow-create
+          placeholder="请输入内容"
+        ></el-select>
+      </el-form-item>
+      <el-form-item label="属性图标" prop="icon">
+        <el-input v-model="dataForm.icon" placeholder="属性图标"></el-input>
+      </el-form-item>
+      <el-form-item label="所属分类" prop="catelogId">
+        <category-cascader :catelogPath.sync="catelogPath"></category-cascader>
+      </el-form-item>
+      <el-form-item label="所属分组" prop="attrGroupId" v-if="type == 1">
+        <el-select ref="groupSelect" v-model="dataForm.attrGroupId" placeholder="请选择">
+          <el-option
+            v-for="item in attrGroups"
+            :key="item.attrGroupId"
+            :label="item.attrGroupName"
+            :value="item.attrGroupId"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="可检索" prop="searchType" v-if="type == 1">
+        <el-switch
+          v-model="dataForm.searchType"
           active-color="#13ce66"
           inactive-color="#ff4949"
           :active-value="1"
           :inactive-value="0"
         ></el-switch>
       </el-form-item>
-      <el-form-item label="检索首字母" prop="firstLetter">
-        <el-input v-model="dataForm.firstLetter" placeholder="检索首字母" clearable></el-input>
+      <el-form-item label="快速展示" prop="showDesc" v-if="type == 1">
+        <el-switch
+          v-model="dataForm.showDesc"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :active-value="1"
+          :inactive-value="0"
+        ></el-switch>
       </el-form-item>
-      <el-form-item label="排序" prop="sort">
-        <el-input v-model.number="dataForm.sort" placeholder="排序" clearable></el-input>
+      <el-form-item label="启用状态" prop="enable">
+        <el-switch
+          v-model="dataForm.enable"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          :active-value="1"
+          :inactive-value="0"
+        ></el-switch>
       </el-form-item>
     </el-form>
   </gulimall-dialog>
 </template>
 
 <script>
-  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog";
+  import GulimallDialog from "../../components/GulimallDialog/GulimallDialog"
+  import CategoryCascader from "../../components/GulimallCategory/CategoryCascader";
   export default {
     name: 'ConfigDialog',
-    components: {GulimallDialog},
-    data () {
+    components: {
+      GulimallDialog,
+      CategoryCascader
+    },
+    props:{
+      type:{
+        type: Number,
+        default: 1
+      }
+    },
+    data() {
       return {
         visible: false,
+        title: '',
         dataForm: {
-          brandId: 0,
-          name: '',
-          logo: '',
-          descript: '',
-          showStatus: 1,
-          firstLetter: '',
-          sort: 0
+          attrId: 0,
+          attrName: "",
+          searchType: 0,
+          valueType: 1,
+          icon: "",
+          valueSelect: "",
+          attrType: 1,
+          enable: 1,
+          catelogId: "",
+          attrGroupId: "",
+          showDesc: 0
         },
+        catelogPath: [],
+        attrGroups: [],
         dataRule: {
-          name: [{ required: true, message: "品牌名不能为空", trigger: "blur" }],
-          logo: [
-            { required: true, message: "品牌logo地址不能为空", trigger: "blur" }
+          attrName: [
+            { required: true, message: "属性名不能为空", trigger: "blur" }
           ],
-          descript: [
-            { required: true, message: "介绍不能为空", trigger: "blur" }
-          ],
-          showStatus: [
+          searchType: [
             {
               required: true,
-              message: "显示状态[0-不显示；1-显示]不能为空",
+              message: "是否需要检索不能为空",
               trigger: "blur"
             }
           ],
-          firstLetter: [
+          valueType: [
             {
-              validator: (rule, value, callback) => {
-                if (value === '') {
-                  callback(new Error("首字母必须填写"));
-                } else if (!/^[a-zA-Z]$/.test(value)) {
-                  callback(new Error("首字母必须a-z或者A-Z之间"))
-                } else {
-                  callback();
-                }
-              },
+              required: true,
+              message: "值类型不能为空",
               trigger: "blur"
             }
           ],
-          sort: [
+          icon: [
+            { required: true, message: "属性图标不能为空", trigger: "blur" }
+          ],
+          attrType: [
             {
-              validator: (rule, value, callback) => {
-                if (value === '') {
-                  callback(new Error("排序字段必须填写"));
-                } else if (!Number.isInteger(value) || value<0) {
-                  callback(new Error("排序必须是一个大于等于0的整数"));
-                } else {
-                  callback();
-                }
-              },
+              required: true,
+              message: "属性类型不能为空",
+              trigger: "blur"
+            }
+          ],
+          enable: [
+            {
+              required: true,
+              message: "启用状态不能为空",
+              trigger: "blur"
+            }
+          ],
+          catelogId: [
+            {
+              required: true,
+              message: "需要选择正确的三级分类数据",
+              trigger: "blur"
+            }
+          ],
+          showDesc: [
+            {
+              required: true,
+              message: "快速展示不能为空",
               trigger: "blur"
             }
           ]
         }
+      };
+    },
+    watch: {
+      catelogPath(path) {
+        //监听到路径变化需要查出这个三级分类的分组信息
+        console.log("路径变了", path);
+        this.attrGroups = [];
+        this.dataForm.attrGroupId = "";
+        this.dataForm.catelogId = path[path.length - 1];
+        if (path && path.length === 3) {
+          this.$http({
+            url: this.$http.adornUrl(
+              `/product/attrgroup/list/${path[path.length - 1]}`
+            ),
+            method: "get",
+            params: this.$http.adornParams()
+          }).then(({ data }) => {
+            if (data && data.code === 0) {
+              this.attrGroups = data.data;
+            } else {
+              this.$message.error(data.msg);
+            }
+          });
+        } else if (path.length === 0) {
+          this.dataForm.catelogId = "";
+        } else {
+          this.$message.error("请选择正确的分类");
+          this.dataForm.catelogId = "";
+        }
       }
     },
     methods: {
-      init (id) {
-        this.dataForm.id = id || 0
+      init (attrId) {
+        this.dataForm.attrId = attrId || 0
         this.$refs.dialog.openDialog()
+        this.dataForm.attrType = this.type
+
+        if (this.type == 1) {
+          this.title =!this.dataForm.attrId ? '新增规格参数' : '修改规格参数'
+        } else {
+          this.title =!this.dataForm.attrId ? '新增销售属性' : '修改销售属性'
+        }
+
+        this.catelogPath = []
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
-          if (this.dataForm.id) {
+          if (this.dataForm.attrId) {
             this.$http({
-              url: this.$http.adornUrl(`/product/brand/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/product/attr/info/${this.dataForm.attrId}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                // this.dataForm.paramKey = data.sysConfig.paramKey
-                // this.dataForm.paramValue = data.sysConfig.paramValue
-                // this.dataForm.remark = data.sysConfig.remark
+                console.log(data.attr.valueType)
+                this.dataForm.attrName = data.attr.attrName;
+                this.dataForm.searchType = data.attr.searchType;
+                this.dataForm.valueType = data.attr.valueType;
+                this.dataForm.icon = data.attr.icon;
+                this.dataForm.valueSelect = data.attr.valueSelect.split(";");
+                this.dataForm.attrType = data.attr.attrType;
+                this.dataForm.enable = data.attr.enable;
+                this.dataForm.catelogId = data.attr.catelogId;
+                this.dataForm.showDesc = data.attr.showDesc;
+                //attrGroupId
+                //catelogPath
+                this.catelogPath = data.attr.catelogPath;
+                this.$nextTick(() => {
+                  this.dataForm.attrGroupId = data.attr.attrGroupId;
+                })
               }
             })
           }
@@ -121,13 +247,20 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/product/brand/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/product/attr/${!this.dataForm.attrId ? "save" : "update"}`),
               method: 'post',
               data: this.$http.adornData({
-                // 'id': this.dataForm.id || undefined,
-                // 'paramKey': this.dataForm.paramKey,
-                // 'paramValue': this.dataForm.paramValue,
-                // 'remark': this.dataForm.remark
+                attrId: this.dataForm.attrId || undefined,
+                attrName: this.dataForm.attrName,
+                searchType: this.dataForm.searchType,
+                valueType: this.dataForm.valueType,
+                icon: this.dataForm.icon,
+                valueSelect: this.dataForm.valueSelect.join(";"),
+                attrType: this.dataForm.attrType,
+                enable: this.dataForm.enable,
+                catelogId: this.dataForm.catelogId,
+                attrGroupId: this.dataForm.attrGroupId,
+                showDesc: this.dataForm.showDesc
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

@@ -5,6 +5,7 @@
       v-if="$route.meta.isTab"
       v-model="mainTabsActiveName"
       :closable="true"
+      type="border-card"
       @tab-click="selectedTabHandle"
       @tab-remove="removeTabHandle">
       <el-dropdown class="site-tabs__tools" :show-timeout="0">

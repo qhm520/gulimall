@@ -2,7 +2,7 @@
   <div>
     <el-input placeholder="输入关键字进行过滤" v-model="filterText" clearable></el-input>
     <gulimall-operation name="分类" icon="menu" style="margin-top: 22px">
-      <el-button  type="primary"  @click="refreshCagegory()">
+      <el-button  class="mauve-background"  @click="refreshCagegory()">
         <icon-svg name="refresh"/>
         &nbsp;刷新分类
       </el-button>
@@ -64,21 +64,21 @@
             type: 'success',
             duration: 1500,
           })
-        });
+        })
       },
       nodeClick(data, node, component) {
-        console.log("子组件category的节点被点击", data, node, component);
+        console.log("子组件category的节点被点击", data, node, component)
         //向父组件发送事件；
-        this.$emit("tree-node-click", data, node, component);
+        this.$emit("tree-node-click", data, node, component)
       },
       // 刷新分类
       refreshCagegory() {
-        this.getMenus();
+        this.getMenus()
       },
     },
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-      this.getMenus();
+      this.getMenus()
     },
 
   }

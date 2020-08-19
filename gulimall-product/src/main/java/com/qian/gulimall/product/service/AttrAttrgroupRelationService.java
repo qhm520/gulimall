@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.R;
+import com.qian.gulimall.product.api.dto.AttrGroupVo;
 import com.qian.gulimall.product.entity.AttrAttrgroupRelationEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,5 +19,6 @@ import java.util.Map;
  */
 public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRelationEntity> {
 
+    void saveBatch(List<AttrGroupVo> attrGroupVoList);
 }
 

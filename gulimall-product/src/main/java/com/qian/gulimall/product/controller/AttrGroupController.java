@@ -4,20 +4,26 @@ import com.qian.gulimall.common.utils.BeanKit;
 import com.qian.gulimall.common.utils.PageUtils;
 import com.qian.gulimall.common.utils.Pageable;
 import com.qian.gulimall.common.utils.R;
+import com.qian.gulimall.product.api.criteria.AttrCriteria;
 import com.qian.gulimall.product.api.criteria.AttrGroupCriteria;
-import com.qian.gulimall.product.api.criteria.BrandCriteria;
+import com.qian.gulimall.product.api.dto.AttrGroupVo;
 import com.qian.gulimall.product.api.result.AttrGroupResult;
 import com.qian.gulimall.product.entity.AttrGroupEntity;
+import com.qian.gulimall.product.service.AttrAttrgroupRelationService;
 import com.qian.gulimall.product.service.AttrGroupService;
+import com.qian.gulimall.product.service.AttrService;
 import com.qian.gulimall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -36,6 +42,12 @@ public class AttrGroupController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private AttrService attrService;
+
+    @Autowired
+    private AttrAttrgroupRelationService attrAttrgroupRelationService;
+
     /**
      * 列表
      */
@@ -45,6 +57,44 @@ public class AttrGroupController {
         PageUtils page = attrGroupService.queryPage(pageable, attrGroupCriteria);
 
         return R.ok().put("page", page);
+    }
+
+
+    @GetMapping("/relationPage")
+    public R attrRelationPage(Pageable pageable, @ModelAttribute AttrGroupCriteria attrGroupCriteria) {
+        PageUtils page = attrGroupService.queryAttrRelationPage(pageable, attrGroupCriteria);
+
+        return R.ok().put("page", page);
+    }
+
+    @GetMapping("/noattr/relationPage")
+    public R noAttrRelationPage(Pageable pageable, @ModelAttribute AttrCriteria attrCriteria) {
+        PageUtils page = attrService.queryNoAttrRelationPage(pageable, attrCriteria);
+
+        return R.ok().put("page", page);
+    }
+
+
+    @PostMapping("/delete/relation")
+    public R deleteAttrGroupRelation(@RequestBody List<AttrGroupVo> attrGroupVoList) {
+        attrGroupService.deleteAttrGroupRelation(attrGroupVoList);
+
+        return R.ok();
+    }
+
+    @PostMapping("/attr/relation")
+    public R addRelation(@RequestBody List<AttrGroupVo> attrGroupVoList){
+
+        attrAttrgroupRelationService.saveBatch(attrGroupVoList);
+        return R.ok();
+    }
+
+
+    @GetMapping("/list/{catelogId}")
+    public R queryAttrGroupInfo(@PathVariable("catelogId") Long catelogId) {
+        List<AttrGroupResult> attrGroupResultList = attrGroupService.queryAttrGroupInfoByCatelogId(catelogId);
+
+        return R.ok().put("data", attrGroupResultList);
     }
 
     /**
