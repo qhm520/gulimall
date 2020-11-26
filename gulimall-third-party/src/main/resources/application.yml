@@ -2,4 +2,4 @@ fdfs:
   so-timeout: 2000
   connect-timeout: 2000
   tracker-list:
-    - 169.254.115.10:22122
+    - 192.168.33.10:22122

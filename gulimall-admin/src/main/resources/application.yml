@@ -3,9 +3,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://169.254.115.10:3306/gulimall_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+      url: jdbc:mysql://192.168.33.10:3306/gulimall_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
       username: root
-      password: root
+      password: 123456
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -35,7 +35,7 @@ spring:
   redis:
     open: false  # 是否开启redis缓存  true开启   false关闭
     database: 0
-    host: 169.254.115.10
+    host: 192.168.33.10
     port: 6379
     password:    # 密码（默认为空）
     timeout: 6000ms  # 连接超时时长（毫秒）
@@ -79,6 +79,6 @@ fdfs:
   so-timeout: 2000
   connect-timeout: 2000
   tracker-list:
-    - 169.254.115.10:22122
+    - 192.168.33.10:22122
   service:
-    http://169.254.115.10:8888
+    http://192.168.33.10:8888
