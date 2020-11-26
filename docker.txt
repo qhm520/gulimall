@@ -1,0 +1,102 @@
+docker images
+docker ps
+# 停止容器
+docker stop redis
+# 开始容器
+docker start redis
+# 重启容器
+docker restart redis
+# 删除docker中的镜像
+docker rmi 镜像id
+# 删除docker中的容器
+docker rm 容器id
+# 查看已退出的容器
+docker ps -a   
+
+
+
+
+
+/********* docker ***********/
+sudo yum remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+
+sudo yum install -y yum-utils
+
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+	
+	
+	
+sudo yum install docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+配置镜像加速器
+针对Docker客户端版本大于 1.10.0 的用户
+
+您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://afzdja5q.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+
+/********* nacos ***********/
+docker pull nacos/nacos-server
+配置文件/mydata/nacos/init.d/custom.properties内容如下
+management.endpoints.web.exposure.include=*
+docker run -p 8848:8848 -e MODE=standalone --restart=always \
+-v /mydata/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties \
+-v /mydata/nacos/logs:/home/nacos/logs \
+--name nacos -d nacos/nacos-server
+
+
+docker  run \
+--name nacos -d \
+-p 8848:8848 \
+--privileged=true \
+--restart=always \
+-e MODE=standalone \
+-e PREFER_HOST_MODE=hostname \
+-v /mydata/nacos/logs:/home/nacos/logs \
+-v /mydata/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties \
+nacos/nacos-server
+
+http://192.168.33.10:8848/nacos/
+
+/********* redis ***********/
+sudo docker pull redis
+mkdir -p /mydata/redis/conf
+touch /mydata/redis/conf/redis.conf
+sudo docker run -p 6379:6379 --name redis  --restart=always -v /mydata/redis/data:/data \
+ -v /mydata/redis/conf/redis.conf:/etc/redis/redis.conf \
+ -d redis redis-server /etc/redis/redis.conf
+ 
+
+ 
+ /********* mysql ***********/
+sudo docker pull mysql:5.7
+sudo mkdir -p /mydata/mysql/conf
+sudo mkdir -p /mydata/mysql/logs
+sudo mkdir -p /mydata/mysql/data
+sudo docker run -p 3306:3306 --name mysql \
+--restart=always \
+-v /mydata/mysql/conf:/etc/mysql \
+-v /mydata/mysql/logs:/var/log/mysql \
+-v /mydata/mysql/data:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=123456 \
+-d mysql:5.7
+ 
+ 
+ 
+ 
