@@ -114,10 +114,14 @@ CREATE TABLE `sys_login_log` (
 ) ENGINE=`InnoDB` DEFAULT CHARACTER SET utf8mb4 COMMENT='系统登录日志';
 
 
--- 文件上传
+-- 文件上传 
+DROP TABLE IF EXISTS `sys_oss`;
 CREATE TABLE `sys_oss` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `url` varchar(200) COMMENT 'URL地址',
+  `original_filename` varchar(200) COMMENT '原文件名称',
+  `upload_user` varchar(50) COMMENT '上传者ID',
+  `ip` varchar(64) COMMENT 'IP地址',
   `create_date` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=`InnoDB` DEFAULT CHARACTER SET utf8mb4 COMMENT='文件上传';

@@ -2,7 +2,8 @@
   <gulimall-dialog
     ref="dialog"
     :title="!dataForm.id ? '新增用户' : '修改用户'"
-    :icon="!dataForm.id ? 'add' : 'edit'">
+    :icon="!dataForm.id ? 'add' : 'edit'"
+    @submit="submit">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submit()"
              label-width="80px">
       <el-form-item label="用户名" prop="userName">
@@ -163,7 +164,7 @@
         })
       },
       // 表单提交
-      submit() {
+      submit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({

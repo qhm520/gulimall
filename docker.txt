@@ -11,8 +11,9 @@ docker rmi 镜像id
 # 删除docker中的容器
 docker rm 容器id
 # 查看已退出的容器
-docker ps -a   
-
+docker ps -a  
+# 进入容器 
+sudo docker exec -it 07599f3e54cf /bin/bash
 
 
 
@@ -96,7 +97,81 @@ sudo docker run -p 3306:3306 --name mysql \
 -v /mydata/mysql/data:/var/lib/mysql \
 -e MYSQL_ROOT_PASSWORD=123456 \
 -d mysql:5.7
+
+ /********* nginx ***********/
+mkdir -p /mydata/nginx/html /mydata/nginx/logs /mydata/nginx/conf
+touch /mydata/nginx/conf/nginx.conf
+docker run  -p 80:80 --name nginx --restart=always \
+  -v /mydata/nginx/html:/usr/share/nginx/html \
+  -v /mydata/nginx/conf/nginx.conf:/etc/nginx/nginx.conf \
+  -v /mydata/nginx/logs:/var/log/nginx \
+  -d nginx
+ 命令说明：
+      --rm：容器终止运行后，自动删除容器文件。
+      -p 80:80： 将容器的 80 端口映射到主机的 8081 端口.
+      --name nginx：将容器命名为 nginx
+      -v /mydata/nginx/html:/usr/share/nginx/html：将我们自己创建的 www 目录挂载到容器的 /usr/share/nginx/html。
+      -v /mydata/nginx/conf/nginx.conf:/etc/nginx/nginx.conf：将我们自己创建的 nginx.conf 挂载到容器的 /etc/nginx/nginx.conf。
+      -v /mydata/nginx/logs:/var/log/nginx：将我们自己创建的 logs 挂载到容器的 /var/log/nginx。
  
  
  
+  /********* zookeeper ***********/
+下载zookeeper镜像
+$ docker pull wurstmeister/zookeeper
  
+2、启动镜像生成容器
+$ docker run -d --restart=always --log-driver json-file --log-opt max-size=100m --log-opt max-file=2  --name zookeeper -p 2181:2181 <br>-v /etc/localtime:/etc/localtime wurstmeister/zookeeper
+  /********* kafka ***********/
+3、下载kafka镜像
+$ docker pull wurstmeister/kafka
+ 
+4、启动kafka镜像生成容器
+$ docker run -d --restart=always --log-driver json-file --log-opt max-size=100m --log-opt max-file=2 --name kafka <br>  -p 9092:9092 -e KAFKA_BROKER_ID=0 -e KAFKA_ZOOKEEPER_CONNECT=172.20.10.10:2181/kafka <br>  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://172.20.10.10:9092 -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 <br>  -v /etc/localtime:/etc/localtime wurstmeister/kafka
+ 
+参数说明：
+-e KAFKA_BROKER_ID=0  在kafka集群中，每个kafka都有一个BROKER_ID来区分自己
+-e KAFKA_ZOOKEEPER_CONNECT=172.20.10.10:2181/kafka 配置zookeeper管理kafka的路径172.20.10.10:2181/kafka
+-e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://172.20.10.10:9092  把kafka的地址端口注册给zookeeper，如果是远程访问要改成外网IP,类如Java程序访问出现无法连接。
+-e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 配置kafka的监听端口
+-v /etc/localtime:/etc/localtime 容器时间同步虚拟机的时间
+ 
+5、验证kafka是否可以使用
+5.1、进入容器
+$ docker exec -it kafka bash
+ 
+5.2、进入 /opt/kafka_2.12-2.3.0/bin/ 目录下
+$ cd /opt/kafka_2.12-2.3.0/bin/
+ 
+5.3、运行kafka生产者发送消息
+$ ./kafka-console-producer.sh --broker-list localhost:9092 --topic sun
+ 
+发送消息
+> hello word!
+  
+5.4、运行kafka消费者接收消息
+$ ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic sun --from-beginning 
+
+  /********* rabbitmq ***********/
+sudo docker pull rabbitmq：management
+docker run -dit --name Myrabbitmq -e RABBITMQ_DEFAULT_USER=admin \
+-e RABBITMQ_DEFAULT_PASS=admin -p 15672:15672 -p 5672:5672 rabbitmq:managemen
+
+  /********* 使用docker搭建FastDFS文件系统 ***********/
+docker pull delron/fastdfs
+mkdir -p /mydata/fdfs/tracker
+mkdir -p /mydata/fdfs/storage
+使用docker镜像构建tracker容器（跟踪服务器，起到调度的作用）：
+docker run -d --network=host --name tracker  --restart=always \
+-v /mydata/fdfs/tracker:/var/fdfs delron/fastdfs tracker
+使用docker镜像构建storage容器（存储服务器，提供容量和备份服务）
+docker run -d --network=host --name storage  --restart=always -e \
+TRACKER_SERVER=192.168.33.10:22122 -v /mydata/fdfs/storage:/var/fdfs \
+-e GROUP_NAME=group1 delron/fastdfs storage
+进入storage容器，到storage的配置文件中配置http访问的端口，配置文件在/etc/fdfs目录下的storage.conf。
+docker exec -it storage /bin/bash
+ 默认端口是8888，也可以不进行更改。
+配置nginx，在/usr/local/nginx目录下，修改nginx.conf文件
+location /group1/M00 {
+        alias  /var/fdfs;
+    }
