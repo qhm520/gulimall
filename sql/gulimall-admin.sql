@@ -122,6 +122,8 @@ CREATE TABLE `sys_oss` (
   `original_filename` varchar(200) COMMENT '原文件名称',
   `upload_user` varchar(50) COMMENT '上传者ID',
   `ip` varchar(64) COMMENT 'IP地址',
+  `status` tinyint(4) DEFAULT NULL COMMENT '状态   0：隐藏   1：显示',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_date` datetime COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=`InnoDB` DEFAULT CHARACTER SET utf8mb4 COMMENT='文件上传';
